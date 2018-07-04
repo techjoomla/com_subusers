@@ -10,11 +10,9 @@
 defined('_JEXEC') or die;
 
 /**
- * Updates the database structure of the component
+ * Updates the structure of the component
  *
- * @version  Release: 0.2b
- * @author   Component Creator <support@component-creator.com>
- * @since    0.1b
+ * @since  1.0.0
  */
 class Com_SubusersInstallerScript
 {
@@ -55,7 +53,7 @@ class Com_SubusersInstallerScript
 	 *
 	 * @return void
 	 *
-	 * @since 0.2b
+	 * @since 1.0.0
 	 */
 	public function install($parent)
 	{
