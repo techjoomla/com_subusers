@@ -1,33 +1,27 @@
 <?php
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @package    Subusers
+ *
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access.
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modeladmin');
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
 
 /**
  * Subusers model.
  *
- * @since  1.6
+ * @since  1.0.0
  */
-class SubusersModelRole extends JModelAdmin
+class SubusersModelRole extends AdminModel
 {
 	/**
-	 * @var      string    The prefix to use with controller messages.
-	 * @since    1.6
-	 */
-	protected $text_prefix = 'COM_SUBUSERS';
-
-	/**
 	 * @var null  Item data
-	 * @since  1.6
+	 * @since  1.0.0
 	 */
 	protected $item = null;
 
@@ -40,11 +34,11 @@ class SubusersModelRole extends JModelAdmin
 	 *
 	 * @return    JTable    A database object
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	public function getTable($type = 'Role', $prefix = 'SubusersTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -55,13 +49,10 @@ class SubusersModelRole extends JModelAdmin
 	 *
 	 * @return  JForm  A JForm object on success, false on failure
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm(
 			'com_subusers.role', 'role',
@@ -83,7 +74,7 @@ class SubusersModelRole extends JModelAdmin
 	 *
 	 * @return   mixed  The data for the form.
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	protected function loadFormData()
 	{
@@ -106,108 +97,60 @@ class SubusersModelRole extends JModelAdmin
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param   integer  $pk  The id of the primary key.
+	 * @param   integer  $roleId  The id of the roleId.
 	 *
 	 * @return  mixed    Object on success, false on failure.
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
-	public function getItem($pk = null)
+	public function getActions($roleId)
 	{
-		if ($item = parent::getItem($pk))
-		{
-			// Do any procesing on fields here if needed
-		}
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('action');
+		$query->from($db->quoteName('#__tjsu_role_action_map'));
+		$query->where($db->quoteName('role_id') . " = " . $db->quote($roleId));
+		$db->setQuery($query);
+		$actions = $db->loadColumn();
 
-		return $item;
+		return $actions;
 	}
 
 	/**
-	 * Method to duplicate an Role
+	 * Method to get a single record.
 	 *
-	 * @param   array  &$pks  An array of primary key IDs.
+	 * @param   array  $data  The id of the roleId.
 	 *
-	 * @return  boolean  True if successful.
+	 * @return  boolean    true on success, false on failure.
 	 *
-	 * @throws  Exception
+	 * @since    1.0.0
 	 */
-	public function duplicate(&$pks)
+	public function save($data)
 	{
-		$user = JFactory::getUser();
+		$pk   = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('role.id');
 
-		// Access checks.
-		if (!$user->authorise('core.create', 'com_subusers'))
+		$role = SubusersRole::getInstance($pk);
+
+		// Bind the data.
+		if (!$role->bind($data))
 		{
-			throw new Exception(JText::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
+			$this->setError($role->getError());
+
+			return false;
 		}
 
-		$dispatcher = JEventDispatcher::getInstance();
-		$context    = $this->option . '.' . $this->name;
+		$result = $role->save();
 
-		// Include the plugins for the save events.
-		JPluginHelper::importPlugin($this->events_map['save']);
-
-		$table = $this->getTable();
-
-		foreach ($pks as $pk)
+		// Store the data.
+		if (!$result)
 		{
-			if ($table->load($pk, true))
-			{
-				// Reset the id to create a new record.
-				$table->id = 0;
+			$this->setError($role->getError());
 
-				if (!$table->check())
-				{
-					throw new Exception($table->getError());
-				}
-				
-
-				// Trigger the before save event.
-				$result = $dispatcher->trigger($this->event_before_save, array($context, &$table, true));
-
-				if (in_array(false, $result, true) || !$table->store())
-				{
-					throw new Exception($table->getError());
-				}
-
-				// Trigger the after save event.
-				$dispatcher->trigger($this->event_after_save, array($context, &$table, true));
-			}
-			else
-			{
-				throw new Exception($table->getError());
-			}
+			return false;
 		}
 
-		// Clean cache
-		$this->cleanCache();
+		$this->setState('role.id', $role->id);
 
 		return true;
-	}
-
-	/**
-	 * Prepare and sanitise the table prior to saving.
-	 *
-	 * @param   JTable  $table  Table Object
-	 *
-	 * @return void
-	 *
-	 * @since    1.6
-	 */
-	protected function prepareTable($table)
-	{
-		jimport('joomla.filter.output');
-
-		if (empty($table->id))
-		{
-			// Set ordering to the last item if not set
-			if (@$table->ordering === '')
-			{
-				$db = JFactory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__tjsu_roles');
-				$max             = $db->loadResult();
-				$table->ordering = $max + 1;
-			}
-		}
 	}
 }

@@ -1,24 +1,25 @@
 <?php
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @package    Subusers
+ *
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+
 // Access check.
-if (!JFactory::getUser()->authorise('core.manage', 'com_subusers'))
+if (!Factory::getUser()->authorise('core.manage', 'com_subusers'))
 {
-	throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
+	throw new \Exception(JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
-// Include dependancies
-jimport('joomla.application.component.controller');
+\JLoader::import("/components/com_subusers/includes/rbacl", JPATH_ADMINISTRATOR);
 
-$controller = JControllerLegacy::getInstance('Subusers');
-$controller->execute(JFactory::getApplication()->input->get('task'));
+$controller = BaseController::getInstance('Subusers');
+$controller->execute(Factory::getApplication()->input->get('task'));
 $controller->redirect();

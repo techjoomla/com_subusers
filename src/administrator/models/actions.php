@@ -1,31 +1,33 @@
 <?php
-
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @package    Subusers
+ *
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
-defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modellist');
+defined('_JEXEC') or die();
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Methods supporting a list of Subusers records.
  *
- * @since  1.6
+ * @since  1.0.0
  */
-class SubusersModelActions extends JModelList
+class SubusersModelActions extends ListModel
 {
-/**
-	* Constructor.
-	*
-	* @param   array  $config  An optional associative array of configuration settings.
-	*
-	* @see        JController
-	* @since      1.6
-	*/
+	/**
+	 * Constructor.
+	 *
+	 * @param   array  $config  An optional associative array of configuration settings.
+	 *
+	 * @see        JController
+	 * @since      1.0.0
+	 */
 	public function __construct($config = array())
 	{
 		if (empty($config['filter_fields']))
@@ -33,10 +35,7 @@ class SubusersModelActions extends JModelList
 			$config['filter_fields'] = array(
 				'id', 'a.`id`',
 				'name', 'a.`name`',
-				'client', 'a.`client`',
-				'created_by', 'a.`created_by`',
-				'ordering', 'a.`ordering`',
-				'state', 'a.`state`',
+				'client', 'a.`client`'
 			);
 		}
 
@@ -57,21 +56,14 @@ class SubusersModelActions extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
-		// Load the filter state.
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
-		$this->setState('filter.state', $published);
-
-		// Load the parameters.
-		$params = JComponentHelper::getParams('com_subusers');
+		$params = ComponentHelper::getParams('com_subusers');
 		$this->setState('params', $params);
 
-		// List state information.
 		parent::populateState('a.name', 'asc');
 	}
 
@@ -86,13 +78,12 @@ class SubusersModelActions extends JModelList
 	 *
 	 * @return   string A store id.
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
 		$id .= ':' . $this->getState('filter.search');
-		$id .= ':' . $this->getState('filter.state');
 
 		return parent::getStoreId($id);
 	}
@@ -102,46 +93,20 @@ class SubusersModelActions extends JModelList
 	 *
 	 * @return   JDatabaseQuery
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	protected function getListQuery()
 	{
-		// Create a new query object.
-		$db    = $this->getDbo();
+		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 
-		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'DISTINCT a.*'
-			)
-		);
+		$query->select($this->getState('list.select', 'DISTINCT a.*'));
 		$query->from('`#__tjsu_actions` AS a');
-
-		// Join over the users for the checked out user
-		$query->select("uc.name AS editor");
-		$query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
-
-		// Join over the user field 'created_by'
-		$query->select('`created_by`.name AS `created_by`');
-		$query->join('LEFT', '#__users AS `created_by` ON `created_by`.id = a.`created_by`');
-
-		// Filter by published state
-		$published = $this->getState('filter.state');
-
-		if (is_numeric($published))
-		{
-			$query->where('a.state = ' . (int) $published);
-		}
-		elseif ($published === '')
-		{
-			$query->where('(a.state IN (0, 1))');
-		}
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
 
-		if (!empty($search))
+		if (! empty($search))
 		{
 			if (stripos($search, 'id:') === 0)
 			{
@@ -154,7 +119,6 @@ class SubusersModelActions extends JModelList
 			}
 		}
 
-		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering');
 		$orderDirn = $this->state->get('list.direction');
 
@@ -164,17 +128,5 @@ class SubusersModelActions extends JModelList
 		}
 
 		return $query;
-	}
-
-	/**
-	 * Get an array of data items
-	 *
-	 * @return mixed Array of data items on success, false on failure.
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
-
-		return $items;
 	}
 }

@@ -4,7 +4,7 @@
  * @version    CVS: 1.0.0
  * @package    Com_Subusers
  * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2014. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 // No direct access
@@ -128,6 +128,12 @@ class SubusersViewRoles extends JViewLegacy
 			}
 		}
 
+		if ($canDo->get('core.delete'))
+		{
+			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'roles.delete', 'JTOOLBAR_DELETE');
+			JToolbarHelper::divider();
+		}
+
 		if ($canDo->get('core.admin'))
 		{
 			JToolBarHelper::preferences('com_subusers');
@@ -149,17 +155,15 @@ class SubusersViewRoles extends JViewLegacy
 	}
 
 	/**
-	 * Method to order fields 
+	 * Method to order fields
 	 *
-	 * @return void 
+	 * @return void
 	 */
 	protected function getSortFields()
 	{
 		return array(
 			'a.`id`' => JText::_('JGRID_HEADING_ID'),
-			'a.`name`' => JText::_('COM_SUBUSERS_ROLES_NAME'),
-			'a.`ordering`' => JText::_('JGRID_HEADING_ORDERING'),
-			'a.`state`' => JText::_('JSTATUS'),
+			'a.`name`' => JText::_('COM_SUBUSERS_ROLES_NAME')
 		);
 	}
 }

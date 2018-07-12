@@ -55,6 +55,8 @@
             <filename>index.html</filename>
             <filename>subusers.php</filename>
             <folder>controllers</folder>
+            <folder>includes</folder>
+            <folder>libraries</folder>
             <folder>assets</folder>
             <folder>helpers</folder>
             <folder>models</folder>

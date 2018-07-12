@@ -204,7 +204,6 @@ class Com_SubusersInstallerScript
 	 */
 	public function update($parent)
 	{
-		$this->installDb($parent);
 		$this->installPlugins($parent);
 		$this->installModules($parent);
 	}

@@ -1,23 +1,23 @@
 <?php
-
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @package    Subusers
+ *
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
-// No direct access
+
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * View to edit
  *
  * @since  1.6
  */
-class SubusersViewRole extends JViewLegacy
+class SubusersViewRole extends HtmlView
 {
 	protected $state;
 
@@ -59,14 +59,14 @@ class SubusersViewRole extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
-		$user  = JFactory::getUser();
+		$user  = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 
 		if (isset($this->item->checked_out))
 		{
-			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
 		}
 		else
 		{

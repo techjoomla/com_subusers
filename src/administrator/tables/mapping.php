@@ -4,7 +4,7 @@
  * @version    CVS: 1.0.0
  * @package    Com_Subusers
  * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2014. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 // No direct access
@@ -41,11 +41,11 @@ class SubusersTablemapping extends JTable
 	 */
 	public function bind($array, $ignore = '')
 	{
-
 		if ($array['id'] == 0)
 		{
 			$array['created_by'] = JFactory::getUser()->id;
 		}
+
 		$input = JFactory::getApplication()->input;
 		$task = $input->getString('task', '');
 
@@ -132,7 +132,6 @@ class SubusersTablemapping extends JTable
 		{
 			$this->ordering = self::getNextOrder();
 		}
-		
 
 		return parent::check();
 	}
@@ -273,7 +272,7 @@ class SubusersTablemapping extends JTable
 	{
 		$this->load($pk);
 		$result = parent::delete($pk);
-		
+
 		return $result;
 	}
 }
