@@ -1,33 +1,28 @@
 <?php
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @package    Subusers
+ *
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access.
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modeladmin');
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
 
 /**
  * Subusers model.
  *
- * @since  1.6
+ * @since  1.0.0
  */
-class SubusersModelAction extends JModelAdmin
+class SubusersModelAction extends AdminModel
 {
 	/**
-	 * @var      string    The prefix to use with controller messages.
-	 * @since    1.6
-	 */
-	protected $text_prefix = 'COM_SUBUSERS';
-
-	/**
 	 * @var null  Item data
-	 * @since  1.6
+	 * @since  1.0.0
 	 */
 	protected $item = null;
 
@@ -40,11 +35,11 @@ class SubusersModelAction extends JModelAdmin
 	 *
 	 * @return    JTable    A database object
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	public function getTable($type = 'Action', $prefix = 'SubusersTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -55,13 +50,10 @@ class SubusersModelAction extends JModelAdmin
 	 *
 	 * @return  JForm  A JForm object on success, false on failure
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm(
 			'com_subusers.action', 'action',
@@ -83,12 +75,12 @@ class SubusersModelAction extends JModelAdmin
 	 *
 	 * @return   mixed  The data for the form.
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_subusers.edit.action.data', array());
+		$data = Factory::getApplication()->getUserState('com_subusers.edit.action.data', array());
 
 		if (empty($data))
 		{
@@ -104,110 +96,62 @@ class SubusersModelAction extends JModelAdmin
 	}
 
 	/**
+	 * Method to load the all role id that are allowed to perform given action
+	 *
+	 * @param   integer  $actionId  The action id
+	 *
+	 * @return  array    The array Of role ids
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getAssignedRoles($actionId)
+	{
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('DISTINCT role_id');
+		$query->from($db->quoteName('#__tjsu_role_action_map'));
+		$query->where($db->quoteName('action_id') . " = " . (int) $actionId);
+		$db->setQuery($query);
+
+		return $db->loadColumn();
+	}
+
+	/**
 	 * Method to get a single record.
 	 *
-	 * @param   integer  $pk  The id of the primary key.
+	 * @param   array  $data  The id of the actionId.
 	 *
-	 * @return  mixed    Object on success, false on failure.
+	 * @return  boolean    true on success, false on failure.
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
-	public function getItem($pk = null)
+	public function save($data)
 	{
-		if ($item = parent::getItem($pk))
+		$pk   = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('action.id');
+
+		$action = SubusersAction::getInstance($pk);
+
+		// Bind the data.
+		if (!$action->bind($data))
 		{
-			// Do any procesing on fields here if needed
+			$this->setError($action->getError());
+
+			return false;
 		}
 
-		return $item;
-	}
+		$result = $action->save();
 
-	/**
-	 * Method to duplicate an Action
-	 *
-	 * @param   array  &$pks  An array of primary key IDs.
-	 *
-	 * @return  boolean  True if successful.
-	 *
-	 * @throws  Exception
-	 */
-	public function duplicate(&$pks)
-	{
-		$user = JFactory::getUser();
-
-		// Access checks.
-		if (!$user->authorise('core.create', 'com_subusers'))
+		// Store the data.
+		if (!$result)
 		{
-			throw new Exception(JText::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
+			$this->setError($action->getError());
+
+			return false;
 		}
 
-		$dispatcher = JEventDispatcher::getInstance();
-		$context    = $this->option . '.' . $this->name;
-
-		// Include the plugins for the save events.
-		JPluginHelper::importPlugin($this->events_map['save']);
-
-		$table = $this->getTable();
-
-		foreach ($pks as $pk)
-		{
-			if ($table->load($pk, true))
-			{
-				// Reset the id to create a new record.
-				$table->id = 0;
-
-				if (!$table->check())
-				{
-					throw new Exception($table->getError());
-				}
-				
-
-				// Trigger the before save event.
-				$result = $dispatcher->trigger($this->event_before_save, array($context, &$table, true));
-
-				if (in_array(false, $result, true) || !$table->store())
-				{
-					throw new Exception($table->getError());
-				}
-
-				// Trigger the after save event.
-				$dispatcher->trigger($this->event_after_save, array($context, &$table, true));
-			}
-			else
-			{
-				throw new Exception($table->getError());
-			}
-		}
-
-		// Clean cache
-		$this->cleanCache();
+		$this->setState('action.id', $action->id);
 
 		return true;
-	}
-
-	/**
-	 * Prepare and sanitise the table prior to saving.
-	 *
-	 * @param   JTable  $table  Table Object
-	 *
-	 * @return void
-	 *
-	 * @since    1.6
-	 */
-	protected function prepareTable($table)
-	{
-		jimport('joomla.filter.output');
-
-		if (empty($table->id))
-		{
-			// Set ordering to the last item if not set
-			if (@$table->ordering === '')
-			{
-				$db = JFactory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__tjsu_actions');
-				$max             = $db->loadResult();
-				$table->ordering = $max + 1;
-			}
-		}
 	}
 }

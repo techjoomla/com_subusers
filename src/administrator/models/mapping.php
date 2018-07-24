@@ -3,7 +3,7 @@
  * @version    CVS: 1.0.0
  * @package    Com_Subusers
  * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @copyright  Copyright (c) 2009-2017 TechJoomla, Tekdi Technologies Pvt. Ltd. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -160,7 +160,6 @@ class SubusersModelMapping extends JModelAdmin
 				{
 					throw new Exception($table->getError());
 				}
-				
 
 				// Trigger the before save event.
 				$result = $dispatcher->trigger($this->event_before_save, array($context, &$table, true));
