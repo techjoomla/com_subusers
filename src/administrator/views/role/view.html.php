@@ -15,15 +15,37 @@ use Joomla\CMS\MVC\View\HtmlView;
 /**
  * View to edit
  *
- * @since  1.6
+ * @since  1.0.0
  */
 class SubusersViewRole extends HtmlView
 {
-	protected $state;
+	/**
+	 * The JForm object
+	 *
+	 * @var  \Joomla\CMS\Form\Form
+	 */
+	protected $form;
 
+	/**
+	 * The active item
+	 *
+	 * @var  object
+	 */
 	protected $item;
 
-	protected $form;
+	/**
+	 * The model state
+	 *
+	 * @var  object
+	 */
+	protected $state;
+
+	/**
+	 * The actions the user is authorised to perform
+	 *
+	 * @var  JObject
+	 */
+	protected $canDo;
 
 	/**
 	 * Display the view
@@ -40,13 +62,15 @@ class SubusersViewRole extends HtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		// Check for errors.
+		$this->canDo = JHelperContent::getActions('com_subusers', 'role', $this->item->id);
+
 		if (count($errors = $this->get('Errors')))
 		{
-			throw new Exception(implode("\n", $errors));
+			throw new Exception(implode("\n", $errors), 500);
 		}
 
 		$this->addToolbar();
+
 		parent::display($tpl);
 	}
 
@@ -59,49 +83,51 @@ class SubusersViewRole extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		Factory::getApplication()->input->set('hidemainmenu', true);
+		$user       = Factory::getUser();
+		$isNew      = ($this->item->id == 0);
 
-		$user  = Factory::getUser();
-		$isNew = ($this->item->id == 0);
+		$canDo = $this->canDo;
+		$layout = Factory::getApplication()->input->get("layout");
 
-		if (isset($this->item->checked_out))
-		{
-			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
-		}
-		else
-		{
-			$checkedOut = false;
-		}
-
-		$canDo = SubusersHelper::getActions();
-
+		$this->sidebar = JHtmlSidebar::render();
 		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_ROLE'), 'role.png');
 
-		// If not checked out, can save the item.
-		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
+		// For new records, check the create permission.
+		if ($layout != "default")
 		{
-			JToolBarHelper::apply('role.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('role.save', 'JTOOLBAR_SAVE');
+			Factory::getApplication()->input->set('hidemainmenu', true);
+
+			if ($isNew)
+			{
+				JToolbarHelper::save('role.save');
+				JToolbarHelper::save2new('role.save2new');
+				JToolbarHelper::cancel('role.cancel');
+			}
+			else
+			{
+				if ($this->isEditable($canDo, $user->id))
+				{
+					JToolbarHelper::save('role.save');
+				}
+
+				JToolbarHelper::cancel('role.cancel', 'JTOOLBAR_CLOSE');
+			}
 		}
 
-		if (!$checkedOut && ($canDo->get('core.create')))
-		{
-			JToolBarHelper::custom('role.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-		}
+		JToolbarHelper::divider();
+	}
 
-		// If an existing item, can save to a copy.
-		if (!$isNew && $canDo->get('core.create'))
-		{
-			JToolBarHelper::custom('role.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
-		}
-
-		if (empty($this->item->id))
-		{
-			JToolBarHelper::cancel('role.cancel', 'JTOOLBAR_CANCEL');
-		}
-		else
-		{
-			JToolBarHelper::cancel('role.cancel', 'JTOOLBAR_CLOSE');
-		}
+	/**
+	 * Is editable
+	 *
+	 * @param   Object   $canDo   Checked Out
+	 *
+	 * @param   integer  $userId  User ID
+	 *
+	 * @return boolean
+	 */
+	protected function isEditable($canDo, $userId)
+	{
+		return $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId);
 	}
 }

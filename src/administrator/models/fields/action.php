@@ -19,7 +19,7 @@ JFormHelper::loadFieldClass('list');
  *
  * @since  __DEPLOY_VERSION__
  */
-class JFormFieldRole extends JFormFieldList
+class JFormFieldAction extends JFormFieldList
 {
 	/**
 	 * The form field type.
@@ -27,7 +27,7 @@ class JFormFieldRole extends JFormFieldList
 	 * @var		string
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected $type = 'role';
+	protected $type = 'action';
 
 	/**
 	 * Method to get list of role options.
@@ -41,14 +41,14 @@ class JFormFieldRole extends JFormFieldList
 		$jinput = Factory::getApplication()->input;
 		$client = $jinput->get('client', '', 'STRING');
 
-		$roleModel = RBACL::model("roles", array("ignore_request" => true));
-		$roleModel->setState('filter.client', $client);
-		$results = $roleModel->getItems();
+		$rolesModel = RBACL::model("actions", array("ignore_request" => true));
+		$rolesModel->setState('filter.client', $client);
+		$results = $rolesModel->getItems();
 
 		$options = array();
-		$options[] = HTMLHelper::_('select.option', '', Text::_('COM_SUBUSERS_FORM_LBL_SELECT_ROLE'));
+		$options[] = HTMLHelper::_('select.option', '', Text::_('COM_SUBUSERS_FORM_LBL_SELECT_ACTION'));
 
-		if ($results)
+		if (!empty($results))
 		{
 			foreach ($results as $result)
 			{
