@@ -39,8 +39,6 @@ class SubusersModelUser extends AdminModel
 	 */
 	public function getTable($type = 'User', $prefix = 'SubusersTable', $config = array())
 	{
-		Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_subusers/tables');
-
 		return Table::getInstance($type, $prefix, $config);
 	}
 

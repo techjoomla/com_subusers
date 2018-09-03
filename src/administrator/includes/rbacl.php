@@ -154,12 +154,10 @@ class RBACL
 	 */
 	public static function authorise($userId, $client, $action, $contentId = null)
 	{
-		$client = (string) $client;
-		$action = (string) $action;
 		$user = Factory::getUser($userId);
 		$result = $user->authorise($action, $client);
 
-		return $result && self::check($userId, $client, $action, $contentId);
+		return $result && self::check($userId, $client, $action);
 	}
 
 	/**
