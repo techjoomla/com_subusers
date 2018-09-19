@@ -1,33 +1,28 @@
 <?php
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @package    Subusers
+ *
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access.
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modeladmin');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
 
 /**
  * Subusers model.
  *
- * @since  1.6
+ * @since  1.0.0
  */
-class SubusersModelUser extends JModelAdmin
+class SubusersModelUser extends AdminModel
 {
 	/**
-	 * @var      string    The prefix to use with controller messages.
-	 * @since    1.6
-	 */
-	protected $text_prefix = 'COM_SUBUSERS';
-
-	/**
 	 * @var null  Item data
-	 * @since  1.6
+	 * @since  1.0.0
 	 */
 	protected $item = null;
 
@@ -40,11 +35,11 @@ class SubusersModelUser extends JModelAdmin
 	 *
 	 * @return    JTable    A database object
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	public function getTable($type = 'User', $prefix = 'SubusersTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -55,13 +50,10 @@ class SubusersModelUser extends JModelAdmin
 	 *
 	 * @return  JForm  A JForm object on success, false on failure
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm(
 			'com_subusers.user', 'user',
@@ -83,7 +75,7 @@ class SubusersModelUser extends JModelAdmin
 	 *
 	 * @return   mixed  The data for the form.
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	protected function loadFormData()
 	{
@@ -104,110 +96,28 @@ class SubusersModelUser extends JModelAdmin
 	}
 
 	/**
-	 * Method to get a single record.
+	 * This method will return the role id of given client content
 	 *
-	 * @param   integer  $pk  The id of the primary key.
+	 * @param   integer  $userId     Id of the user for which to check authorisation.
+	 * @param   string   $client     The name of the client to authorise. com_content
+	 * @param   integer  $contentId  The content key. null check with role and allowed actions.
 	 *
-	 * @return  mixed    Object on success, false on failure.
+	 * @return  integer  The role id
 	 *
-	 * @since    1.6
+	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getItem($pk = null)
+	public function getAssociatedContentRole($userId, $client, $contentId)
 	{
-		if ($item = parent::getItem($pk))
-		{
-			// Do any procesing on fields here if needed
-		}
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true);
 
-		return $item;
-	}
+		$query->select('role_id');
+		$query->from($db->quoteName('#__tjsu_users'));
+		$query->where($db->quoteName('user_id') . " = " . (int) $userId);
+		$query->where($db->quoteName('client') . " = " . $db->q($client));
+		$query->where($db->quoteName('client_id') . " = " . (int) $contentId);
+		$db->setQuery($query);
 
-	/**
-	 * Method to duplicate an User
-	 *
-	 * @param   array  &$pks  An array of primary key IDs.
-	 *
-	 * @return  boolean  True if successful.
-	 *
-	 * @throws  Exception
-	 */
-	public function duplicate(&$pks)
-	{
-		$user = JFactory::getUser();
-
-		// Access checks.
-		if (!$user->authorise('core.create', 'com_subusers'))
-		{
-			throw new Exception(JText::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
-		}
-
-		$dispatcher = JEventDispatcher::getInstance();
-		$context    = $this->option . '.' . $this->name;
-
-		// Include the plugins for the save events.
-		JPluginHelper::importPlugin($this->events_map['save']);
-
-		$table = $this->getTable();
-
-		foreach ($pks as $pk)
-		{
-			if ($table->load($pk, true))
-			{
-				// Reset the id to create a new record.
-				$table->id = 0;
-
-				if (!$table->check())
-				{
-					throw new Exception($table->getError());
-				}
-				
-
-				// Trigger the before save event.
-				$result = $dispatcher->trigger($this->event_before_save, array($context, &$table, true));
-
-				if (in_array(false, $result, true) || !$table->store())
-				{
-					throw new Exception($table->getError());
-				}
-
-				// Trigger the after save event.
-				$dispatcher->trigger($this->event_after_save, array($context, &$table, true));
-			}
-			else
-			{
-				throw new Exception($table->getError());
-			}
-		}
-
-		// Clean cache
-		$this->cleanCache();
-
-		return true;
-	}
-
-	/**
-	 * Prepare and sanitise the table prior to saving.
-	 *
-	 * @param   JTable  $table  Table Object
-	 *
-	 * @return void
-	 *
-	 * @since    1.6
-	 */
-	protected function prepareTable($table)
-	{
-		jimport('joomla.filter.output');
-
-		if (empty($table->id))
-		{
-			// Set ordering to the last item if not set
-			if (@$table->ordering === '')
-			{
-				$db = JFactory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__tjsu_users');
-				$max             = $db->loadResult();
-				$table->ordering = $max + 1;
-			}
-		}
+		return $db->loadResult();
 	}
 }

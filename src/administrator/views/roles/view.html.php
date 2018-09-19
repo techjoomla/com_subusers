@@ -1,29 +1,79 @@
 <?php
-
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2015. All rights reserved.
+ * @package    Subusers
+ *
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
-// No direct access
+
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
+use Joomla\CMS\Factory;
 
 /**
  * View class for a list of Subusers.
  *
- * @since  1.6
+ * @since  1.0.0
  */
 class SubusersViewRoles extends JViewLegacy
 {
+	/**
+	 * An array of items
+	 *
+	 * @var  array
+	 */
 	protected $items;
 
+	/**
+	 * The pagination object
+	 *
+	 * @var  JPagination
+	 */
 	protected $pagination;
 
+	/**
+	 * The model state
+	 *
+	 * @var  object
+	 */
 	protected $state;
+
+	/**
+	 * Form object for search filters
+	 *
+	 * @var  JForm
+	 */
+	public $filterForm;
+
+	/**
+	 * Logged in User
+	 *
+	 * @var  JObject
+	 */
+	public $user;
+
+	/**
+	 * The active search filters
+	 *
+	 * @var  array
+	 */
+	public $activeFilters;
+
+	/**
+	 * The sidebar markup
+	 *
+	 * @var  string
+	 */
+	protected $sidebar;
+
+	/**
+	 * An ACL object to verify user rights.
+	 *
+	 * @var    CMSObject
+	 * @since  1.0.0
+	 */
+	protected $canDo;
 
 	/**
 	 * Display the view
@@ -39,6 +89,10 @@ class SubusersViewRoles extends JViewLegacy
 		$this->state = $this->get('State');
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
+		$this->filterForm    = $this->get('FilterForm');
+		$this->activeFilters = $this->get('ActiveFilters');
+		$this->user            = Factory::getUser();
+		$this->canDo         = JHelperContent::getActions('com_subusers');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -47,10 +101,9 @@ class SubusersViewRoles extends JViewLegacy
 		}
 
 		SubusersHelper::addSubmenu('roles');
-
 		$this->addToolbar();
-
 		$this->sidebar = JHtmlSidebar::render();
+
 		parent::display($tpl);
 	}
 
@@ -59,107 +112,32 @@ class SubusersViewRoles extends JViewLegacy
 	 *
 	 * @return void
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	protected function addToolbar()
 	{
-		require_once JPATH_COMPONENT . '/helpers/subusers.php';
+		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_ROLES'), '');
 
-		$state = $this->get('State');
-		$canDo = SubusersHelper::getActions($state->get('filter.category_id'));
-
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_ROLES'), 'roles.png');
-
-		// Check if the form exists before showing the add/edit buttons
-		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/role';
-
-		if (file_exists($formPath))
+		if ($this->canDo->get('core.create'))
 		{
-			if ($canDo->get('core.create'))
-			{
-				JToolBarHelper::addNew('role.add', 'JTOOLBAR_NEW');
-				JToolbarHelper::custom('roles.duplicate', 'copy.png', 'copy_f2.png', 'JTOOLBAR_DUPLICATE', true);
-			}
-
-			if ($canDo->get('core.edit') && isset($this->items[0]))
-			{
-				JToolBarHelper::editList('role.edit', 'JTOOLBAR_EDIT');
-			}
+			JToolbarHelper::addNew('role.add');
 		}
 
-		if ($canDo->get('core.edit.state'))
+		if ($this->canDo->get('core.edit'))
 		{
-			if (isset($this->items[0]->state))
-			{
-				JToolBarHelper::divider();
-				JToolBarHelper::custom('roles.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::custom('roles.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
-			}
-			elseif (isset($this->items[0]))
-			{
-				// If this component does not use state then show a direct delete button as we can not trash
-				JToolBarHelper::deleteList('', 'roles.delete', 'JTOOLBAR_DELETE');
-			}
-
-			if (isset($this->items[0]->state))
-			{
-				JToolBarHelper::divider();
-				JToolBarHelper::archiveList('roles.archive', 'JTOOLBAR_ARCHIVE');
-			}
-
-			if (isset($this->items[0]->checked_out))
-			{
-				JToolBarHelper::custom('roles.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
-			}
+			JToolbarHelper::editList('role.edit');
 		}
 
-		// Show trash and delete for components that uses the state field
-		if (isset($this->items[0]->state))
+		if ($this->canDo->get('core.delete'))
 		{
-			if ($state->get('filter.state') == -2 && $canDo->get('core.delete'))
-			{
-				JToolBarHelper::deleteList('', 'roles.delete', 'JTOOLBAR_EMPTY_TRASH');
-				JToolBarHelper::divider();
-			}
-			elseif ($canDo->get('core.edit.state'))
-			{
-				JToolBarHelper::trash('roles.trash', 'JTOOLBAR_TRASH');
-				JToolBarHelper::divider();
-			}
+			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'roles.delete', 'JTOOLBAR_DELETE');
+			JToolbarHelper::divider();
 		}
 
-		if ($canDo->get('core.admin'))
+		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
 		{
-			JToolBarHelper::preferences('com_subusers');
+			JToolbarHelper::preferences('com_subusers');
+			JToolbarHelper::divider();
 		}
-
-		// Set sidebar action - New in 3.0
-		JHtmlSidebar::setAction('index.php?option=com_subusers&view=roles');
-
-		$this->extra_sidebar = '';
-		JHtmlSidebar::addFilter(
-
-			JText::_('JOPTION_SELECT_PUBLISHED'),
-
-			'filter_published',
-
-			JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), "value", "text", $this->state->get('filter.state'), true)
-
-		);
-	}
-
-	/**
-	 * Method to order fields 
-	 *
-	 * @return void 
-	 */
-	protected function getSortFields()
-	{
-		return array(
-			'a.`id`' => JText::_('JGRID_HEADING_ID'),
-			'a.`name`' => JText::_('COM_SUBUSERS_ROLES_NAME'),
-			'a.`ordering`' => JText::_('JGRID_HEADING_ORDERING'),
-			'a.`state`' => JText::_('JSTATUS'),
-		);
 	}
 }
