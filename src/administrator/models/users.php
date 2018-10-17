@@ -120,6 +120,27 @@ class SubusersModelUsers extends ListModel
 			}
 		}
 
+		$roleId = $this->getState('filter.role_id');
+
+		if (!empty($roleId))
+		{
+			$query->where($db->quoteName('a.role_id') . " = " . (int) $roleId);
+		}
+
+		$client = $this->getState('filter.client');
+
+		if (!empty($client))
+		{
+			$query->where($db->quoteName('a.client') . " = " . $db->quote($client));
+		}
+
+		$clientId = $this->getState('filter.client_id');
+
+		if (!empty($clientId))
+		{
+			$query->where($db->quoteName('a.client_id') . " = " . (int) $clientId);
+		}
+
 		$orderCol  = $this->state->get('list.ordering');
 		$orderDirn = $this->state->get('list.direction');
 
