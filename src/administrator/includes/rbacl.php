@@ -205,7 +205,7 @@ class RBACL
 	/**
 	 * Method to Get roles of users again to selected agency.
 	 *
-	 * @param   integer  $agencyId  agency id
+	 * @param   integer  $contentId  agency id
 	 * @param   integer  $userId    user id
 	 * @param   integer  $roleId    selected role id
 	 *
@@ -213,12 +213,12 @@ class RBACL
 	 *
 	 * @since 1.6
 	 */
-	public function getAuthorizedActions($agencyId = null, $userId = null, $roleId = null)
+	public function getAuthorizedActions($contentId = null, $userId = null, $roleId = null)
 	{
-		if ($agencyId == null)
+		if ($contentId == null)
 		{
 			$input = JFactory::getApplication()->input;
-			$agencyId = $input->get('aid', '0', 'INT');
+			$contentId = $input->get('aid', '0', 'INT');
 		}
 
 		if ($userId == null)
@@ -231,7 +231,7 @@ class RBACL
 
 		if (empty($userRoleId))
 		{
-			$userRoleId = self::getRoleByUser($userId, 'com_multiagency', $agencyId);
+			$userRoleId = self::getRoleByUser($userId, 'com_multiagency', $contentId);
 		}
 
 		if (!empty($userRoleId))
@@ -245,7 +245,7 @@ class RBACL
 
 			$roleActions = $db->loadColumn();
 
-			if ($roleActions && !empty($agencyId) && !empty($userRoleId))
+			if ($roleActions && !empty($contentId) && !empty($userRoleId))
 			{
 				$query = $db->getQuery(true);
 				$query->select('m.role_id,r.name, count( m.action_id) as actionCount, (select count(aa.action_id)
