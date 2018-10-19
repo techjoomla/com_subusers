@@ -106,7 +106,7 @@ class SubusersModelUser extends AdminModel
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getAssociatedContentRole($userId, $client, $contentId)
+	public function getAssociatedContentRole($userId, $client, $contentId = null)
 	{
 		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
@@ -115,9 +115,14 @@ class SubusersModelUser extends AdminModel
 		$query->from($db->quoteName('#__tjsu_users'));
 		$query->where($db->quoteName('user_id') . " = " . (int) $userId);
 		$query->where($db->quoteName('client') . " = " . $db->q($client));
-		$query->where($db->quoteName('client_id') . " = " . (int) $contentId);
+
+		if (!is_null($contentId))
+		{
+			$query->where($db->quoteName('client_id') . " = " . $db->quote($contentId));
+		}
+
 		$db->setQuery($query);
 
-		return $db->loadResult();
+		return $db->loadColumn();
 	}
 }
