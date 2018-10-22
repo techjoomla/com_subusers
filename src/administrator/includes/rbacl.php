@@ -203,25 +203,24 @@ class RBACL
 	}
 
 	/**
-	 * Method to Get roles of users again to selected agency.
+	 * Method to Get roles of users against to selected client.
 	 *
-	 * @param   integer  $contentId  agency id
-	 * @param   integer  $userId    user id
-	 * @param   integer  $roleId    selected role id
+	 * @param   integer  $contentId  content id
+	 * @param   integer  $userId     user id
 	 *
-	 * @return 	mixed
+	 * @return 	array
 	 *
-	 * @since 1.6
+	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getAuthorizedActions($contentId = null, $userId = null, $roleId = null)
+	public function getAuthorizedActions($contentId = null, $userId = null)
 	{
-		if ($contentId == null)
+		if (is_null($contentId))
 		{
 			$input = JFactory::getApplication()->input;
 			$contentId = $input->get('aid', '0', 'INT');
 		}
 
-		if ($userId == null)
+		if (is_null($userId))
 		{
 			$userId = JFactory::getUser()->id;
 		}
@@ -237,6 +236,8 @@ class RBACL
 		if (!empty($userRoleId))
 		{
 			$db = JFactory::getDBO();
+
+			// Get actions mapped to roles.
 			$subInQuery = $db->getQuery(true);
 			$subInQuery->select('action_id')
 			->from($db->quoteName('#__tjsu_role_action_map'))
@@ -245,8 +246,12 @@ class RBACL
 
 			$roleActions = $db->loadColumn();
 
-			if ($roleActions && !empty($contentId) && !empty($userRoleId))
+			if ($roleActions && !empty($contentId))
 			{
+				/* Get the roles again to cotent id.
+				 * e.g. One content is Agency and agency having multiple roles manager, staff, employee
+				 * One user having two different roles for two different agency. then If I pass then agency id then query give us mapped actions agains to agency.
+				 */
 				$query = $db->getQuery(true);
 				$query->select('m.role_id,r.name, count( m.action_id) as actionCount, (select count(aa.action_id)
 				FROM #__tjsu_role_action_map aa WHERE aa.role_id = m.role_id) as roleCount');
@@ -258,7 +263,7 @@ class RBACL
 				$query->having('roleCount <= actionCount');
 				$db->setQuery($query);
 
-				return $roles = $db->loadAssocList();
+				return $db->loadAssocList();
 			}
 		}
 	}

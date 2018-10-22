@@ -102,7 +102,7 @@ class SubusersModelUser extends AdminModel
 	 * @param   string   $client     The name of the client to authorise. com_content
 	 * @param   integer  $contentId  The content key. null check with role and allowed actions.
 	 *
-	 * @return  integer  The role id
+	 * @return  array  The role id
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
