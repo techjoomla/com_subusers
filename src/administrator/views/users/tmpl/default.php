@@ -71,7 +71,7 @@ $listDirn  = $this->state->get('list.direction');
 									<?php echo HTMLHelper::_('searchtools.sort', 'COM_SUBUSERS_USERS_CLIENT_ID', 'a.role_id', $listDirn, $listOrder); ?>
 								</th>
 								<th width="1%" class="nowrap center hidden-phone">
-									<?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.`id`', $listDirn, $listOrder); ?>
+									<?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder);?>
 								</th>
 							</tr>
 						</thead>

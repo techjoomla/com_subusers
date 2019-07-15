@@ -30,12 +30,12 @@ class SubusersModelUsers extends ListModel
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				'id', 'a.`id`',
-				'user_id', 'a.`user_id`',
-				'role_id', 'a.`role_id`',
-				'client', 'a.`client`',
-				'client_id', 'a.`client_id`',
-				'created_by', 'a.`created_by`',
+				'id', 'a.id',
+				'user_id', 'a.user_id',
+				'role_id', 'a.role_id',
+				'client', 'a.client',
+				'client_id', 'a.client_id',
+				'created_by', 'a.created_by',
 			);
 		}
 
