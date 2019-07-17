@@ -115,7 +115,7 @@ class SubusersModelActions extends ListModel
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$search = $db->Quote('%' . $db->escape(trim($search), true) . '%');
 				$query->where('( a.`name` LIKE ' . $search .
 				' OR a.client LIKE ' . $search .
 				' OR a.code LIKE ' . $search .

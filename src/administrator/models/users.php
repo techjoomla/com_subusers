@@ -115,7 +115,7 @@ class SubusersModelUsers extends ListModel
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$search = $db->Quote('%' . $db->escape(trim($search), true) . '%');
 				$query->where('( uc.`name` LIKE ' . $search . '  OR  a.`user_id` LIKE ' . $search . '  OR  a.`client_id` LIKE ' . $search . ' )');
 			}
 		}
