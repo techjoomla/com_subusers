@@ -97,8 +97,10 @@ class SubusersModelRoles extends ListModel
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				$query->where('( a.`name` LIKE ' . $search . ' )');
+				$search = $db->Quote('%' . $db->escape(trim($search), true) . '%');
+				$query->where('( a.`name` LIKE ' . $search .
+					' OR a.client LIKE ' . $search .
+				' )');
 			}
 		}
 

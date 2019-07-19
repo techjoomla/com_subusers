@@ -26,8 +26,8 @@ $listDirn  = $this->state->get('list.direction');
 <div class="tj-page">
 	<div class="row-fluid">
 		<form action="<?php echo Route::_('index.php?option=com_subusers&view=actions'); ?>" method="post" name="adminForm" id="adminForm">
-
-			<?php if (!empty( $this->sidebar))
+			<?php
+			if (!empty( $this->sidebar))
 			{
 			?>
 				<div id="j-sidebar-container" class="span2">
@@ -42,10 +42,10 @@ $listDirn  = $this->state->get('list.direction');
 				<div id="j-main-container">
 			<?php
 			}
+
 			// Search tools bar
 			echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
-			?>
-			<?php
+
 			if (empty($this->items))
 			{
 			?>
@@ -57,48 +57,50 @@ $listDirn  = $this->state->get('list.direction');
 			else
 			{
 				?>
-					<table class="table table-striped" id="actionsList">
-						<thead>
-							<tr>
-								<th width="1%" class="nowrap center hidden-phone"></th>
-								<th width="1%" class="center">
-									<?php echo HTMLHelper::_('grid.checkall'); ?>
-								</th>
-								<th>
-									<?php echo HTMLHelper::_('searchtools.sort', 'COM_SUBUSERS_ACTIONS_NAME', 'a.user_id', $listDirn, $listOrder); ?>
-								</th>
-								<th>
-									<?php echo HTMLHelper::_('searchtools.sort', 'COM_SUBUSERS_FORM_LBL_ACTION_CODE', 'a.role_id', $listDirn, $listOrder); ?>
-								</th>
-								<th>
-									<?php echo HTMLHelper::_('searchtools.sort', 'COM_SUBUSERS_ACTIONS_CLIENT', 'a.role_id', $listDirn, $listOrder); ?>
-								</th>
-								<th width="1%" class="nowrap center hidden-phone">
-									<?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.`id`', $listDirn, $listOrder); ?>
-								</th>
-							</tr>
-						</thead>
-						<tfoot>
-							<tr>
-								<td colspan="10">
-									<?php echo $this->pagination->getListFooter(); ?>
-								</td>
-							</tr>
-						</tfoot>
-						<tbody>
-							<?php
-							foreach ($this->items as $i => $item)
-							{
-								$canEdit    = $this->canDo->get('core.edit');
-								$canEditOwn = $this->canDo->get('core.edit.own');
-								?>
-								<tr class="row <?php echo $i % 2; ?>" sortable-group-id="<?php echo $item->id; ?>">
+				<table class="table table-striped" id="actionsList">
+					<thead>
+						<tr>
+							<th width="1%" class="nowrap center hidden-phone"></th>
+							<th width="1%" class="center">
+								<?php echo HTMLHelper::_('grid.checkall'); ?>
+							</th>
+							<th>
+								<?php echo HTMLHelper::_('searchtools.sort', 'COM_SUBUSERS_ACTIONS_NAME', 'a.name', $listDirn, $listOrder); ?>
+							</th>
+							<th>
+								<?php echo HTMLHelper::_('searchtools.sort', 'COM_SUBUSERS_FORM_LBL_ACTION_CODE', 'a.code', $listDirn, $listOrder); ?>
+							</th>
+							<th>
+								<?php echo HTMLHelper::_('searchtools.sort', 'COM_SUBUSERS_ACTIONS_CLIENT', 'a.client', $listDirn, $listOrder); ?>
+							</th>
+							<th width="1%" class="nowrap center hidden-phone">
+								<?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
+							</th>
+						</tr>
+					</thead>
+					<tfoot>
+						<tr>
+							<td colspan="10">
+								<?php echo $this->pagination->getListFooter(); ?>
+							</td>
+						</tr>
+					</tfoot>
+					<tbody>
+						<?php
+						foreach ($this->items as $i => $item)
+						{
+							$canEdit    = $this->canDo->get('core.edit');
+							$canEditOwn = $this->canDo->get('core.edit.own');
+							?>
+							<tr class="row <?php echo $i % 2; ?>"
+							sortable-group-id="<?php echo $item->id; ?>">
 								<td class="center">
 									<?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
 								</td>
 								<td class="has-context">
 									<div class="pull-left break-word">
-										<?php if ($canEdit || $canEditOwn)
+										<?php
+										if ($canEdit || $canEditOwn)
 										{
 											?>
 											<a class="hasTooltip" href="
@@ -106,10 +108,10 @@ $listDirn  = $this->state->get('list.direction');
 											<?php echo Text::_('JACTION_EDIT'); ?>">
 											<?php echo $this->escape($item->name); ?></a>
 											<?php
-											}
-											else
-											{
-												?>
+										}
+										else
+										{
+											?>
 											<span title="<?php echo Text::sprintf('JFIELD_ALIAS_LABEL', $this->escape($item->name)); ?>">
 											<?php echo $this->escape($item->name); ?></span>
 										<?php
@@ -121,17 +123,17 @@ $listDirn  = $this->state->get('list.direction');
 								<td><?php echo $this->escape($item->client); ?></td>
 								<td><?php echo (int) $item->id; ?></td>
 							</tr>
-							<?php
-								}
-							?>
-						<tbody>
-					</table>
-					<?php
-					}
-					?>
-					<input type="hidden" name="task" value="" />
-					<input type="hidden" name="boxchecked" value="0" />
-					<?php echo HTMLHelper::_('form.token'); ?>
+						<?php
+						}
+						?>
+					<tbody>
+				</table>
+				<?php
+			}
+			?>
+			<input type="hidden" name="task" value="" />
+			<input type="hidden" name="boxchecked" value="0" />
+			<?php echo HTMLHelper::_('form.token'); ?>
 			</div>
 		</form>
 	</div>

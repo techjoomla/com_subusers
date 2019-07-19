@@ -30,12 +30,12 @@ class SubusersModelUsers extends ListModel
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				'id', 'a.`id`',
-				'user_id', 'a.`user_id`',
-				'role_id', 'a.`role_id`',
-				'client', 'a.`client`',
-				'client_id', 'a.`client_id`',
-				'created_by', 'a.`created_by`',
+				'id', 'a.id',
+				'user_id', 'a.user_id',
+				'role_id', 'a.role_id',
+				'client', 'a.client',
+				'client_id', 'a.client_id',
+				'created_by', 'a.created_by',
 			);
 		}
 
@@ -115,7 +115,7 @@ class SubusersModelUsers extends ListModel
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$search = $db->Quote('%' . $db->escape(trim($search), true) . '%');
 				$query->where('( uc.`name` LIKE ' . $search . '  OR  a.`user_id` LIKE ' . $search . '  OR  a.`client_id` LIKE ' . $search . ' )');
 			}
 		}

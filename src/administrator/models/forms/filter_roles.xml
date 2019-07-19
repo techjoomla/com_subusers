@@ -5,7 +5,7 @@
 			name="search"
 			type="text"
 			label="COM_SUBUSERS_FILTER_SEARCH_LABEL"
-			description="COM_SUBUSERS_ACTION_FILTER_SEARCH_DESC"
+			description="COM_SUBUSERS_ROLES_FILTER_SEARCH_DESC"
 			hint="JSEARCH_FILTER"
 			filter="string"
 		/>
