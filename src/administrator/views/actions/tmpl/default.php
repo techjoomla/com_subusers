@@ -27,7 +27,7 @@ $listDirn  = $this->state->get('list.direction');
 	<div class="row-fluid">
 		<form action="<?php echo Route::_('index.php?option=com_subusers&view=actions'); ?>" method="post" name="adminForm" id="adminForm">
 			<?php
-			if (!empty( $this->sidebar))
+			if (!empty($this->sidebar))
 			{
 			?>
 				<div id="j-sidebar-container" class="span2">
