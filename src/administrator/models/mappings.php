@@ -1,10 +1,11 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2019 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -81,7 +82,7 @@ class SubusersModelMappings extends ListModel
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
-		$query->select(array('a.*','b.name as role_name', 'b.client as role_client', 'c.name as action_name', 'c.code as action_code'));
+		$query->select(array('a.*', 'b.name as role_name', 'b.client as role_client', 'c.name as action_name', 'c.code as action_code'));
 		$query->from('`#__tjsu_role_action_map` AS a');
 		$query->join('INNER', $db->quoteName('#__tjsu_roles', 'b') . ' ON (' . $db->quoteName('a.role_id') . ' = ' . $db->quoteName('b.id') . ')');
 		$query->join('INNER', $db->quoteName('#__tjsu_actions', 'c') . ' ON (' . $db->quoteName('a.action_id') . ' = ' . $db->quoteName('c.id') . ')');

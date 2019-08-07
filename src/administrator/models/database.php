@@ -3,8 +3,9 @@
  * @package     Subusers
  * @subpackage  com_subusers
  *
- * @copyright   Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2019 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -37,6 +38,7 @@ class SubusersModelDatabase extends InstallerModelDatabase
 
 			return false;
 		}
+
 		return $changeSet;
 	}
 }
