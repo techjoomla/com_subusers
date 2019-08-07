@@ -188,7 +188,7 @@ class SubusersAction extends CMSObject
 	 *
 	 * @since __DEPLOY_VERSION__
 	 */
-	public static function loadActionByCode(String $code, String $client)
+	public static function loadActionByCode($code, $client)
 	{
 		$table = RBACL::table("action");
 		$table->load(array("code" => $code, "client" => $client));
