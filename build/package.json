@@ -3,7 +3,7 @@
   "subextensions": [
     {
       "name": "com_subusers",
-      "repoUrl": "https://github.com/techjoomla/com_subusers.git",
+      "repoUrl": "git@github.com:techjoomla/com_subusers.git",
       "src": "./com_subusers/src/*",
       "dest": "builds/com_subusers",
       "zip_name": "com_subusers",
