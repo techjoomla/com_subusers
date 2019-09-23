@@ -1,10 +1,11 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2019 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -30,12 +31,12 @@ class SubusersModelUsers extends ListModel
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				'id', 'a.`id`',
-				'user_id', 'a.`user_id`',
-				'role_id', 'a.`role_id`',
-				'client', 'a.`client`',
-				'client_id', 'a.`client_id`',
-				'created_by', 'a.`created_by`',
+				'id', 'a.id',
+				'user_id', 'a.user_id',
+				'role_id', 'a.role_id',
+				'client', 'a.client',
+				'client_id', 'a.client_id',
+				'created_by', 'a.created_by',
 			);
 		}
 
@@ -123,7 +124,7 @@ class SubusersModelUsers extends ListModel
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$search = $db->Quote('%' . $db->escape(trim($search), true) . '%');
 				$query->where('( uc.`name` LIKE ' . $search . '  OR  a.`user_id` LIKE ' . $search . '  OR  a.`client_id` LIKE ' . $search . ' )');
 			}
 		}
