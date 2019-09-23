@@ -25,7 +25,6 @@ Factory::getDocument()->addScriptDeclaration(
 	{
 		if (task == "action.cancel" || document.formvalidator.isValid(document.getElementById("action-form")))
 		{
-			jQuery("#permissions-sliders select").attr("disabled", "disabled");
 			Joomla.submitform(task, document.getElementById("action-form"));
 		}
 	};

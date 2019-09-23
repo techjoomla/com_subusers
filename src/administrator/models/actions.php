@@ -1,10 +1,11 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2019 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die();
@@ -33,9 +34,10 @@ class SubusersModelActions extends ListModel
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				'id', 'a.`id`',
-				'name', 'a.`name`',
-				'client', 'a.`client`'
+				'id', 'a.id',
+				'name', 'a.name',
+				'client', 'a.client',
+				'code', 'a.code',
 			);
 		}
 
@@ -114,8 +116,11 @@ class SubusersModelActions extends ListModel
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				$query->where('( a.`name` LIKE ' . $search . ' )');
+				$search = $db->Quote('%' . $db->escape(trim($search), true) . '%');
+				$query->where('( a.`name` LIKE ' . $search .
+				' OR a.client LIKE ' . $search .
+				' OR a.code LIKE ' . $search .
+				' )');
 			}
 		}
 
