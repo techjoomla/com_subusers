@@ -1,10 +1,11 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2019 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -19,11 +20,33 @@ use Joomla\CMS\MVC\View\HtmlView;
  */
 class SubusersViewAction extends HtmlView
 {
-	protected $state;
+	/**
+	 * The JForm object
+	 *
+	 * @var  JForm
+	 */
+	protected $form;
 
+	/**
+	 * The active item
+	 *
+	 * @var  object
+	 */
 	protected $item;
 
-	protected $form;
+	/**
+	 * The model state
+	 *
+	 * @var  object
+	 */
+	protected $state;
+
+	/**
+	 * The actions the user is authorised to perform
+	 *
+	 * @var  JObject
+	 */
+	protected $canDo;
 
 	/**
 	 * Display the view
@@ -40,13 +63,15 @@ class SubusersViewAction extends HtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		// Check for errors.
+		$this->canDo = JHelperContent::getActions('com_subusers', 'action', $this->item->id);
+
 		if (count($errors = $this->get('Errors')))
 		{
-			throw new Exception(implode("\n", $errors));
+			throw new Exception(implode("\n", $errors), 500);
 		}
 
 		$this->addToolbar();
+
 		parent::display($tpl);
 	}
 
@@ -59,49 +84,51 @@ class SubusersViewAction extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		Factory::getApplication()->input->set('hidemainmenu', true);
+		$user       = Factory::getUser();
+		$isNew      = ($this->item->id == 0);
 
-		$user  = Factory::getUser();
-		$isNew = ($this->item->id == 0);
+		$canDo = $this->canDo;
+		$layout = Factory::getApplication()->input->get("layout");
 
-		if (isset($this->item->checked_out))
-		{
-			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
-		}
-		else
-		{
-			$checkedOut = false;
-		}
-
-		$canDo = SubusersHelper::getActions();
-
+		$this->sidebar = JHtmlSidebar::render();
 		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_ACTION'), 'action.png');
 
-		// If not checked out, can save the item.
-		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
+		// For new records, check the create permission.
+		if ($layout != "default")
 		{
-			JToolBarHelper::apply('action.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('action.save', 'JTOOLBAR_SAVE');
+			Factory::getApplication()->input->set('hidemainmenu', true);
+
+			if ($isNew)
+			{
+				JToolbarHelper::save('action.save');
+				JToolbarHelper::save2new('action.save2new');
+				JToolbarHelper::cancel('action.cancel');
+			}
+			else
+			{
+				if ($this->isEditable($canDo, $user->id))
+				{
+					JToolbarHelper::save('action.save');
+				}
+
+				JToolbarHelper::cancel('action.cancel', 'JTOOLBAR_CLOSE');
+			}
 		}
 
-		if (!$checkedOut && ($canDo->get('core.create')))
-		{
-			JToolBarHelper::custom('action.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-		}
+		JToolbarHelper::divider();
+	}
 
-		// If an existing item, can save to a copy.
-		if (!$isNew && $canDo->get('core.create'))
-		{
-			JToolBarHelper::custom('action.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
-		}
-
-		if (empty($this->item->id))
-		{
-			JToolBarHelper::cancel('action.cancel', 'JTOOLBAR_CANCEL');
-		}
-		else
-		{
-			JToolBarHelper::cancel('action.cancel', 'JTOOLBAR_CLOSE');
-		}
+	/**
+	 * Is editable
+	 *
+	 * @param   Object   $canDo   Checked Out
+	 *
+	 * @param   integer  $userId  User ID
+	 *
+	 * @return boolean
+	 */
+	protected function isEditable($canDo, $userId)
+	{
+		return $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId);
 	}
 }
