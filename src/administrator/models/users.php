@@ -101,11 +101,19 @@ class SubusersModelUsers extends ListModel
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
-		$query->select(array('a.*', 'uc.name', 'rl.name as rolename'));
+		$query->select(array('a.*', 'uc.name','uc.email', 'rl.name as rolename'));
 		$query->from('`#__tjsu_users` AS a');
 		$query->join('INNER', $db->quoteName('#__users', 'uc') . ' ON (' . $db->quoteName('a.user_id') . ' = ' . $db->quoteName('uc.id') . ')');
 		$query->join('INNER', $db->quoteName('#__tjsu_roles', 'rl') . ' ON (' . $db->quoteName('rl.id') . ' = ' . $db->quoteName('a.role_id') . ')');
 		$search = $this->getState('filter.search');
+
+		// If the model is set to check item state, add to the query.
+		$state = $this->getState('filter.state');
+
+		if (is_numeric($state))
+		{
+			$query->where('uc.block = ' . (int) $state);
+		}
 
 		if (!empty($search))
 		{
@@ -118,6 +126,48 @@ class SubusersModelUsers extends ListModel
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
 				$query->where('( uc.`name` LIKE ' . $search . '  OR  a.`user_id` LIKE ' . $search . '  OR  a.`client_id` LIKE ' . $search . ' )');
 			}
+		}
+
+		$roleId = $this->getState('filter.role_id');
+
+		if (!empty($roleId))
+		{
+			if (is_array($roleId))
+			{
+				$query->where($db->quoteName('a.role_id') . 'IN (' . implode(',', $db->quote($roleId)) . ')');
+			}
+			else
+			{
+				$query->where($db->quoteName('a.role_id') . " = " . (int) $roleId);
+			}
+		}
+
+		$client = $this->getState('filter.client');
+
+		if (!empty($client))
+		{
+			$query->where($db->quoteName('a.client') . " = " . $db->quote($client));
+		}
+
+		$clientId = $this->getState('filter.client_id');
+
+		if (!empty($clientId))
+		{
+			if (is_array($clientId))
+			{
+				$query->where($db->quoteName('a.client_id') . 'IN (' . implode(',', $db->quote($clientId)) . ')');
+			}
+			else
+			{
+				$query->where($db->quoteName('a.client_id') . " = " . (int) $clientId);
+			}
+		}
+
+		$groupBy = $this->getState('group_by');
+
+		if (!empty($groupBy))
+		{
+			$query->group($db->quoteName('a.' . $groupBy));
 		}
 
 		$orderCol  = $this->state->get('list.ordering');
