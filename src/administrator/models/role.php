@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
 
 /**
  * Subusers model.
@@ -153,5 +154,46 @@ class SubusersModelRole extends AdminModel
 		$this->setState('role.id', $role->id);
 
 		return true;
+	}
+
+	/**
+	 * Method to get a roles by actions.
+	 *
+	 * @param   array   $actions   array of action code.
+	 * @param   string  $client    name of action client.
+	 * @param   int     $clientId  client id.
+	 *
+	 * @return  array  indexed array of associated arrays.
+	 *
+	 * @since   __DEPLOY__VERSION__
+	 */
+	public function getAuthorizeRoles($actions = array(), $client = null, $clientId = null)
+	{
+		if (!empty($actions))
+		{
+			$db = Factory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select($db->quoteName(('id')));
+			$query->from($db->quoteName('#__tjsu_actions'));
+
+			if ($client)
+			{
+				$query->where($db->quoteName('client') . ' = ' . $db->quote($client));
+			}
+
+			foreach ($actions as $action)
+			{
+				$query->where($db->quoteName('code') . ' = ' . $db->quote($action));
+			}
+
+			$db->setQuery($query);
+
+			$actionIds = $db->loadColumn();
+
+			// Get role ids by providing action ids
+			$actionModel = RBACL::model("action");
+
+			return $actionModel->getAssignedRoles($actionIds);
+		}
 	}
 }
