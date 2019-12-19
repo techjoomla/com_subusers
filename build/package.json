@@ -1,0 +1,21 @@
+{
+  "package_name": "com_subusers",
+  "subextensions": [
+    {
+      "name": "com_subusers",
+      "repoUrl": "https://github.com/thite-amol/com_subusers.git",
+      "src": "./com_subusers/src/*",
+      "dest": "builds/com_subusers",
+      "zip_name": "com_subusers",
+      "format": "zip"
+    }
+  ],
+  "versions": {
+    "1.1.0": {
+      "com_subusers": {
+        "version": "1.1.0",
+        "branch": "release-1.1.0"
+      }
+    }
+  }
+}
