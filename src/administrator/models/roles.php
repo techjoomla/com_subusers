@@ -58,9 +58,11 @@ class SubusersModelRoles extends ListModel
 	{
 		$app = Factory::getApplication('administrator');
 
+		// Load the filter state.
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
+		// Load the parameters.
 		$params = JComponentHelper::getParams('com_subusers');
 		$this->setState('params', $params);
 
@@ -76,18 +78,23 @@ class SubusersModelRoles extends ListModel
 	 */
 	protected function getListQuery()
 	{
+		// Create a new query object.
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
+		// Select the required fields from the table.
 		$query->select(
 			$this->getState(
 				'list.select', 'DISTINCT a.*'
 			)
 		);
 		$query->from('`#__tjsu_roles` AS a');
+
+		// Join over the user field 'created_by'
 		$query->select('`created_by`.name AS `created_by`');
 		$query->join('LEFT', '#__users AS `created_by` ON `created_by`.id = a.`created_by`');
 
+		// Filter by search in title
 		$search = $this->getState('filter.search');
 
 		if (!empty($search))
@@ -107,11 +114,13 @@ class SubusersModelRoles extends ListModel
 
 		$client = $this->getState('filter.client');
 
+		// Filter by client
 		if (!empty($client))
 		{
 			$query->where($db->quoteName('a.client') . ' = ' . $db->quote($client));
 		}
 
+		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering');
 		$orderDirn = $this->state->get('list.direction');
 

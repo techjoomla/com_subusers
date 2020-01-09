@@ -8,6 +8,7 @@
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
+// No direct access.
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -55,7 +56,13 @@ class SubusersModelMapping extends AdminModel
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		$form = $this->loadForm('com_subusers.mapping', 'mapping', array('control' => 'jform', 'load_data' => $loadData));
+		// Get the form.
+		$form = $this->loadForm(
+			'com_subusers.mapping', 'mapping',
+			array('control' => 'jform',
+				'load_data' => $loadData
+			)
+		);
 
 		if (empty($form))
 		{
@@ -74,6 +81,7 @@ class SubusersModelMapping extends AdminModel
 	 */
 	protected function loadFormData()
 	{
+		// Check the session for previously entered form data.
 		$data = Factory::getApplication()->getUserState('com_subusers.edit.mapping.data', array());
 
 		if (empty($data))

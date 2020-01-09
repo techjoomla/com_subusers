@@ -59,7 +59,7 @@ class SubusersModelRole extends AdminModel
 		$form = $this->loadForm(
 			'com_subusers.role', 'role',
 			array('control' => 'jform',
-				'load_data' => $loadData,
+				'load_data' => $loadData
 			)
 		);
 

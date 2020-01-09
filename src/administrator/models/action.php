@@ -59,7 +59,7 @@ class SubusersModelAction extends AdminModel
 		$form = $this->loadForm(
 			'com_subusers.action', 'action',
 			array('control' => 'jform',
-				'load_data' => $loadData,
+				'load_data' => $loadData
 			)
 		);
 
@@ -112,7 +112,16 @@ class SubusersModelAction extends AdminModel
 
 		$query->select('DISTINCT role_id');
 		$query->from($db->quoteName('#__tjsu_role_action_map'));
-		$query->where($db->quoteName('action_id') . " = " . (int) $actionId);
+
+		if (is_array($actionId))
+		{
+			$query->where($db->quoteName('action_id') . 'IN (' . implode(',', $db->quote($actionId)) . ')');
+		}
+		else
+		{
+			$query->where($db->quoteName('action_id') . " = " . (int) $actionId);
+		}
+
 		$db->setQuery($query);
 
 		return $db->loadColumn();
