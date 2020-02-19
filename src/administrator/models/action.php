@@ -59,7 +59,7 @@ class SubusersModelAction extends AdminModel
 		$form = $this->loadForm(
 			'com_subusers.action', 'action',
 			array('control' => 'jform',
-				'load_data' => $loadData,
+				'load_data' => $loadData
 			)
 		);
 

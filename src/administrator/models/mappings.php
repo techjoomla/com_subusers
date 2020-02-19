@@ -61,6 +61,7 @@ class SubusersModelMappings extends ListModel
 	{
 		$app = Factory::getApplication('administrator');
 
+		// Load the filter state.
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
@@ -79,6 +80,7 @@ class SubusersModelMappings extends ListModel
 	 */
 	protected function getListQuery()
 	{
+		// Create a new query object.
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
