@@ -73,16 +73,17 @@ class RBACL
 	/**
 	 * Method to check if a user is authorised to perform an action, optionally on an content.
 	 *
-	 * @param   integer  $userId     Id of the user for which to check authorisation.
-	 * @param   string   $client     The name of the client to authorise. com_content
-	 * @param   string   $action     The name of the action to authorise. Eg. core.edit
-	 * @param   integer  $contentId  The content key. null check with role and allowed actions.
+	 * @param   integer  $userId        Id of the user for which to check authorisation.
+	 * @param   string   $client        The name of the client to authorise. com_content
+	 * @param   string   $action        The name of the action to authorise. Eg. core.edit
+	 * @param   string   $actionClient  The name of the client of action to authorise. Eg. com_content
+	 * @param   integer  $contentId     The content key. null check with role and allowed actions.
 	 *
 	 * @return  boolean         True if allowed, false for an explicit deny, null for an implicit deny.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public static function check($userId, $client, $action, $contentId = null)
+	public static function check($userId, $client, $action, $actionClient = null, $contentId = null)
 	{
 		$action = strtolower(preg_replace('#[\s\-]+#', '.', trim($action)));
 
@@ -90,10 +91,15 @@ class RBACL
 
 		if ($user->id)
 		{
+			if (empty(trim($actionClient)))
+			{
+				$actionClient = $client;
+			}
+
 			/*
 			 * Step 1. Check the action is exist
 			 */
-			$actionObj = SubusersAction::loadActionByCode($action, $client);
+			$actionObj = SubusersAction::loadActionByCode($action, $actionClient);
 
 			if ($actionObj->id)
 			{
@@ -130,9 +136,7 @@ class RBACL
 					$userModel = self::model("user");
 					$contentRoleId = $userModel->getAssociatedContentRole($userId, $client, $contentId);
 
-					$rolesAllowed = array_intersect($contentRoleId, $allowedRoles);
-
-					if (!empty($rolesAllowed))
+					if (in_array($contentRoleId[0], $allowedRoles))
 					{
 						return true;
 					}
@@ -146,23 +150,31 @@ class RBACL
 	/**
 	 * This method will check the core Joomla authorisatoion and RBACL authorisation
 	 *
-	 * @param   integer  $userId     Id of the user for which to check authorisation.
-	 * @param   string   $client     The name of the client to authorise. com_content
-	 * @param   string   $action     The name of the action to authorise. Eg. core.edit
-	 * @param   integer  $contentId  The content key. null check with role and allowed actions.
+	 * @param   integer  $userId        Id of the user for which to check authorisation.
+	 * @param   string   $client        The name of the client to authorise. com_content
+	 * @param   string   $action        The name of the action to authorise. Eg. core.edit
+	 * @param   string   $actionClient  The name of the client of action to authorise. Eg. com_content
+	 * @param   integer  $contentId     The content key. null check with role and allowed actions.
 	 *
 	 * @return  boolean  True if authorised
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public static function authorise($userId, $client, $action, $contentId = null)
+	public static function authorise($userId, $client, $action, $actionClient = null, $contentId = null)
 	{
 		$client = (string) $client;
 		$action = (string) $action;
-		$user = Factory::getUser($userId);
-		$result = $user->authorise($action, $client);
+		$actionClient = (string) $actionClient;
 
-		return $result && self::check($userId, $client, $action, $contentId);
+		if (empty(trim($actionClient)))
+		{
+			$actionClient = $client;
+		}
+
+		$user = Factory::getUser($userId);
+		$result = $user->authorise($action, $actionClient);
+
+		return $result && self::check($userId, $client, $action, $actionClient, $contentId);
 	}
 
 	/**

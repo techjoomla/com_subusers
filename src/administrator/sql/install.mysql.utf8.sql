@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `#__tjsu_roles` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL COMMENT 'The name of the role',
   `client` varchar(255) NOT NULL COMMENT 'The client name Eg. com_tjlms, com_jlike',
+  `state` tinyint(1) NOT NULL DEFAULT '1',
   `created_by` int(11) NOT NULL,
   `created_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_by` int(11) NOT NULL,
