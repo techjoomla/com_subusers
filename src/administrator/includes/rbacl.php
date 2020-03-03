@@ -136,7 +136,7 @@ class RBACL
 					$userModel = self::model("user");
 					$contentRoleId = $userModel->getAssociatedContentRole($userId, $client, $contentId);
 
-					if (in_array($contentRoleId[0], $allowedRoles))
+					if (!empty(array_intersect($contentRoleId, $allowedRoles)))
 					{
 						return true;
 					}
