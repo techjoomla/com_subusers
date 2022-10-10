@@ -59,3 +59,7 @@ CREATE TABLE IF NOT EXISTS `#__tjsu_users` (
   `modified_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `#__tjsu_roles` (`id`, `name`, `client`, `created_by`, `created_date`, `modified_by`, `modified_date`, `ordering`) VALUES
+(1,	'Organization Manager',	'com_multiagency',	0,	'0000-00-00 00:00:00',	0,	'0000-00-00 00:00:00',	1),
+(2,	'Organization User',	'com_multiagency',	0,	'0000-00-00 00:00:00',	0,	'0000-00-00 00:00:00',	2);
