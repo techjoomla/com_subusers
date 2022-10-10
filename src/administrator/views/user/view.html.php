@@ -102,22 +102,22 @@ class SubusersViewUser extends HtmlView
 
 			if ($isNew)
 			{
-				JToolbarHelper::save('user.save');
-				JToolbarHelper::save2new('user.save2new');
-				JToolbarHelper::cancel('user.cancel');
+				ToolbarHelper::save('user.save');
+				ToolbarHelper::save2new('user.save2new');
+				ToolbarHelper::cancel('user.cancel');
 			}
 			else
 			{
 				if ($this->isEditable($canDo, $user->id))
 				{
-					JToolbarHelper::save('user.save');
+					ToolbarHelper::save('user.save');
 				}
 
-				JToolbarHelper::cancel('user.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('user.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
 
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	/**

@@ -125,24 +125,24 @@ class SubusersViewMappings extends HtmlView
 
 		if ($this->canDo->get('core.create'))
 		{
-			JToolbarHelper::addNew('mapping.add');
+			ToolbarHelper::addNew('mapping.add');
 		}
 
 		if ($this->canDo->get('core.edit'))
 		{
-			JToolbarHelper::editList('mapping.edit');
+			ToolbarHelper::editList('mapping.edit');
 		}
 
 		if ($this->canDo->get('core.delete'))
 		{
-			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'mappings.delete', 'JTOOLBAR_DELETE');
-			JToolbarHelper::divider();
+			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'mappings.delete', 'JTOOLBAR_DELETE');
+			ToolbarHelper::divider();
 		}
 
 		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
 		{
-			JToolbarHelper::preferences('com_subusers');
-			JToolbarHelper::divider();
+			ToolbarHelper::preferences('com_subusers');
+			ToolbarHelper::divider();
 		}
 	}
 }

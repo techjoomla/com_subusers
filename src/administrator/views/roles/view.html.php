@@ -125,24 +125,24 @@ class SubusersViewRoles extends HtmlView
 
 		if ($this->canDo->get('core.create'))
 		{
-			JToolbarHelper::addNew('role.add');
+			ToolbarHelper::addNew('role.add');
 		}
 
 		if ($this->canDo->get('core.edit'))
 		{
-			JToolbarHelper::editList('role.edit');
+			ToolbarHelper::editList('role.edit');
 		}
 
 		if ($this->canDo->get('core.delete'))
 		{
-			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'roles.delete', 'JTOOLBAR_DELETE');
-			JToolbarHelper::divider();
+			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'roles.delete', 'JTOOLBAR_DELETE');
+			ToolbarHelper::divider();
 		}
 
 		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
 		{
-			JToolbarHelper::preferences('com_subusers');
-			JToolbarHelper::divider();
+			ToolbarHelper::preferences('com_subusers');
+			ToolbarHelper::divider();
 		}
 	}
 }

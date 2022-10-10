@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View to edit
@@ -102,22 +103,22 @@ class SubusersViewAction extends HtmlView
 
 			if ($isNew)
 			{
-				JToolbarHelper::save('action.save');
-				JToolbarHelper::save2new('action.save2new');
-				JToolbarHelper::cancel('action.cancel');
+				ToolbarHelper::save('action.save');
+				ToolbarHelper::save2new('action.save2new');
+				ToolbarHelper::cancel('action.cancel');
 			}
 			else
 			{
 				if ($this->isEditable($canDo, $user->id))
 				{
-					JToolbarHelper::save('action.save');
+					ToolbarHelper::save('action.save');
 				}
 
-				JToolbarHelper::cancel('action.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('action.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
 
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	/**

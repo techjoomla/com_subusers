@@ -101,22 +101,22 @@ class SubusersViewMapping extends HtmlView
 
 			if ($isNew)
 			{
-				JToolbarHelper::save('mapping.save');
-				JToolbarHelper::save2new('mapping.save2new');
-				JToolbarHelper::cancel('mapping.cancel');
+				ToolbarHelper::save('mapping.save');
+				ToolbarHelper::save2new('mapping.save2new');
+				ToolbarHelper::cancel('mapping.cancel');
 			}
 			else
 			{
 				if ($this->isEditable($canDo, $user->id))
 				{
-					JToolbarHelper::save('mapping.save');
+					ToolbarHelper::save('mapping.save');
 				}
 
-				JToolbarHelper::cancel('mapping.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('mapping.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
 
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	/**

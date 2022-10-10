@@ -126,24 +126,24 @@ class SubusersViewUsers extends HtmlView
 
 		if ($canDo->get('core.create'))
 		{
-			JToolbarHelper::addNew('user.add');
+			ToolbarHelper::addNew('user.add');
 		}
 
 		if ($canDo->get('core.edit'))
 		{
-			JToolbarHelper::editList('users.edit');
+			ToolbarHelper::editList('users.edit');
 		}
 
 		if ($canDo->get('core.delete'))
 		{
-			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'users.delete', 'JTOOLBAR_DELETE');
-			JToolbarHelper::divider();
+			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'users.delete', 'JTOOLBAR_DELETE');
+			ToolbarHelper::divider();
 		}
 
 		if ($canDo->get('core.admin') || $canDo->get('core.options'))
 		{
-			JToolbarHelper::preferences('com_subusers');
-			JToolbarHelper::divider();
+			ToolbarHelper::preferences('com_subusers');
+			ToolbarHelper::divider();
 		}
 	}
 }

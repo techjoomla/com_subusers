@@ -102,22 +102,22 @@ class SubusersViewRole extends HtmlView
 
 			if ($isNew)
 			{
-				JToolbarHelper::save('role.save');
-				JToolbarHelper::save2new('role.save2new');
-				JToolbarHelper::cancel('role.cancel');
+				ToolbarHelper::save('role.save');
+				ToolbarHelper::save2new('role.save2new');
+				ToolbarHelper::cancel('role.cancel');
 			}
 			else
 			{
 				if ($this->isEditable($canDo, $user->id))
 				{
-					JToolbarHelper::save('role.save');
+					ToolbarHelper::save('role.save');
 				}
 
-				JToolbarHelper::cancel('role.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('role.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
 
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	/**
