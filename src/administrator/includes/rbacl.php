@@ -204,4 +204,70 @@ class RBACL
 
 		return $roles;
 	}
+
+	/**
+	 * Method to Get roles of users against to selected client.
+	 *
+	 * @param   integer  $contentId  content id
+	 * @param   integer  $userId     user id
+	 *
+	 * @return 	array
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getAuthorizedActions($contentId = null, $userId = null)
+	{
+		if (is_null($contentId))
+		{
+			$input = JFactory::getApplication()->input;
+			$contentId = $input->get('aid', '0', 'INT');
+		}
+
+		if (is_null($userId))
+		{
+			$userId = JFactory::getUser()->id;
+		}
+
+		// Get subusers actions mapp
+		$userRoleId = self::getRoleByUser($userId, 'com_multiagency', 0);
+
+		if (empty($userRoleId))
+		{
+			$userRoleId = self::getRoleByUser($userId, 'com_multiagency', $contentId);
+		}
+
+		if (!empty($userRoleId))
+		{
+			$db = JFactory::getDBO();
+
+			// Get actions mapped to roles.
+			$subInQuery = $db->getQuery(true);
+			$subInQuery->select('action_id')
+			->from($db->quoteName('#__tjsu_role_action_map'))
+			->where($db->quoteName('role_id') . 'IN(' . implode(',', $userRoleId) . ')');
+			$db->setQuery($subInQuery);
+
+			$roleActions = $db->loadColumn();
+
+			if ($roleActions && !empty($contentId))
+			{
+				/* Get the roles again to cotent id.
+				 * e.g. One content is Agency and agency having multiple roles manager, staff, employee
+				 * One user having two different roles for two different agency. then If I pass then agency id then query give us mapped actions agains to agency.
+				 */
+				$query = $db->getQuery(true);
+				$query->select('m.role_id,r.name, count( m.action_id) as actionCount, (select count(aa.action_id)
+				FROM #__tjsu_role_action_map aa WHERE aa.role_id = m.role_id) as roleCount');
+				$query->from($db->quoteName('#__tjsu_role_action_map', 'm'));
+				$query->join('INNER', $db->quoteName('#__tjsu_actions', 'a') . ' ON (' . $db->quoteName('a.id') . ' = ' . $db->quoteName('m.action_id') . ')');
+				$query->join('INNER', $db->quoteName('#__tjsu_roles', 'r') . ' ON (' . $db->quoteName('r.id') . ' = ' . $db->quoteName('m.role_id') . ')');
+				$query->where($db->quoteName('m.action_id') . ' IN (' . implode(',', $roleActions) . ')');
+				$query->group($db->quoteName('m.role_id'));
+				$query->having('roleCount <= actionCount');
+				$db->setQuery($query);
+
+				return $db->loadAssocList();
+			}
+		}
+	}
 }
