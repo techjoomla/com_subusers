@@ -20,14 +20,4 @@ use Joomla\CMS\MVC\Controller\FormController;
  */
 class SubusersControllerMapping extends FormController
 {
-	/**
-	 * Constructor
-	 *
-	 * @throws Exception
-	 */
-	public function __construct()
-	{
-		$this->view_list = 'mappings';
-		parent::__construct();
-	}
 }
