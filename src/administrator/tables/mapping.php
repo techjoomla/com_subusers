@@ -179,7 +179,9 @@ class SubusersTablemapping extends Table
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				throw new Exception(500, Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+
+				return false;
 			}
 		}
 
@@ -220,6 +222,8 @@ class SubusersTablemapping extends Table
 		{
 			$this->state = $state;
 		}
+
+		$this->setError('');
 
 		return true;
 	}
