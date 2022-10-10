@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Methods supporting a list of Subusers records.
@@ -63,7 +64,7 @@ class SubusersModelRoles extends ListModel
 		$this->setState('filter.search', $search);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_subusers');
+		$params = ComponentHelper::getParams('com_subusers');
 		$this->setState('params', $params);
 
 		parent::populateState($ordering, $direction);

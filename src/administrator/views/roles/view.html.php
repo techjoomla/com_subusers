@@ -11,13 +11,16 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * View class for a list of Subusers.
  *
  * @since  1.0.0
  */
-class SubusersViewRoles extends JViewLegacy
+class SubusersViewRoles extends HtmlView
 {
 	/**
 	 * An array of items
@@ -93,7 +96,7 @@ class SubusersViewRoles extends JViewLegacy
 		$this->filterForm    = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
 		$this->user            = Factory::getUser();
-		$this->canDo         = JHelperContent::getActions('com_subusers');
+		$this->canDo         = ContentHelper::getActions('com_subusers');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -118,7 +121,7 @@ class SubusersViewRoles extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_ROLES'), '');
+		JToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ROLES'), '');
 
 		if ($this->canDo->get('core.create'))
 		{

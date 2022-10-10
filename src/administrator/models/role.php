@@ -81,7 +81,7 @@ class SubusersModelRole extends AdminModel
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_subusers.edit.role.data', array());
+		$data = Factory::getApplication()->getUserState('com_subusers.edit.role.data', array());
 
 		if (empty($data))
 		{
@@ -107,7 +107,7 @@ class SubusersModelRole extends AdminModel
 	 */
 	public function getActions($roleId)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('action');
 		$query->from($db->quoteName('#__tjsu_role_action_map'));

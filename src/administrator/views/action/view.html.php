@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
 
 /**
  * View to edit
@@ -63,7 +65,7 @@ class SubusersViewAction extends HtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		$this->canDo = JHelperContent::getActions('com_subusers', 'action', $this->item->id);
+		$this->canDo = ContentHelper::getActions('com_subusers', 'action', $this->item->id);
 
 		if (count($errors = $this->get('Errors')))
 		{
@@ -91,7 +93,7 @@ class SubusersViewAction extends HtmlView
 		$layout = Factory::getApplication()->input->get("layout");
 
 		$this->sidebar = JHtmlSidebar::render();
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_ACTION'), 'action.png');
+		JToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ACTION'), 'action.png');
 
 		// For new records, check the create permission.
 		if ($layout != "default")

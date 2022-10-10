@@ -10,7 +10,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Methods supporting a list of Subusers records.
@@ -57,14 +59,14 @@ class SubusersModelUsers extends ListModel
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
 		$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . ' . filter.user_id', 'filter_user_id', '', 'string'));
 
-		$params = JComponentHelper::getParams('com_subusers');
+		$params = ComponentHelper::getParams('com_subusers');
 		$this->setState('params', $params);
 
 		parent::populateState('a.id', 'desc');

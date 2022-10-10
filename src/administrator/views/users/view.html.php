@@ -12,6 +12,8 @@ defined('_JEXEC') or die();
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
 
 /**
  * View class for a list of Subusers.
@@ -94,7 +96,7 @@ class SubusersViewUsers extends HtmlView
 		$this->filterForm = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
 		$this->user = Factory::getUser();
-		$this->canDo = JHelperContent::getActions('com_subusers');
+		$this->canDo = ContentHelper::getActions('com_subusers');
 
 		if (count($errors = $this->get('Errors')))
 		{
@@ -118,7 +120,7 @@ class SubusersViewUsers extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_USERS'), 'users.png');
+		JToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_USERS'), 'users.png');
 
 		$canDo = $this->canDo;
 

@@ -12,11 +12,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
 // Access check.
 if (!Factory::getUser()->authorise('core.manage', 'com_subusers'))
 {
-	throw new \Exception(JText::_('JERROR_ALERTNOAUTHOR'));
+	throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'));
 }
 
 \JLoader::import("/components/com_subusers/includes/rbacl", JPATH_ADMINISTRATOR);
