@@ -74,7 +74,7 @@ class SubusersViewMappings extends HtmlView
 	/**
 	 * An ACL object to verify user rights.
 	 *
-	 * @var    CMSObject
+	 * @var    void
 	 * @since  1.0.0
 	 */
 	protected $canDo;

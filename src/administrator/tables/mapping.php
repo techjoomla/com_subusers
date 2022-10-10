@@ -14,9 +14,10 @@ defined('_JEXEC') or die;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Language\Text;
+/** @scrutinizer ignore-deprecated */
+use Joomla\Registry\Registry;
 
 /**
  * mapping Table class
