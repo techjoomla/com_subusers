@@ -74,7 +74,7 @@ class SubusersViewRoles extends HtmlView
 	/**
 	 * An ACL object to verify user rights.
 	 *
-	 * @var    void
+	 * @var    Joomla\CMS\Object\CMSObject
 	 * @since  1.0.0
 	 */
 	protected $canDo;
