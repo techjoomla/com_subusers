@@ -16,7 +16,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
+use /** @scrutinizer ignore-type */ Joomla\Registry\Registry;
 
 /**
  * mapping Table class
