@@ -94,7 +94,7 @@ class SubusersViewRole extends HtmlView
 		$layout = Factory::getApplication()->input->get("layout");
 
 		$this->sidebar = JHtmlSidebar::render();
-		JToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ROLE'), 'role.png');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ROLE'), 'role.png');
 
 		// For new records, check the create permission.
 		if ($layout != "default")

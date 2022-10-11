@@ -121,7 +121,7 @@ class SubusersViewActions extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ACTIONS'), '');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ACTIONS'), '');
 
 		$canDo = $this->canDo;
 

@@ -94,7 +94,7 @@ class SubusersViewAction extends HtmlView
 		$layout = Factory::getApplication()->input->get("layout");
 
 		$this->sidebar = JHtmlSidebar::render();
-		JToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ACTION'), 'action.png');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ACTION'), 'action.png');
 
 		// For new records, check the create permission.
 		if ($layout != "default")

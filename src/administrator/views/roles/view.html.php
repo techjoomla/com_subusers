@@ -122,7 +122,7 @@ class SubusersViewRoles extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ROLES'), '');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ROLES'), '');
 
 		if ($this->canDo->get('core.create'))
 		{

@@ -121,7 +121,7 @@ class SubusersViewUsers extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_USERS'), 'users.png');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_USERS'), 'users.png');
 
 		$canDo = $this->canDo;
 

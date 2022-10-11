@@ -122,7 +122,7 @@ class SubusersViewMappings extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_MAPPINGS'), '');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_MAPPINGS'), '');
 
 		if ($this->canDo->get('core.create'))
 		{
