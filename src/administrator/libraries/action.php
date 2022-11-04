@@ -12,6 +12,7 @@ defined('_JEXEC') or die('Unauthorized Access');
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Language\Text;
 
 /**
  * Action class.  Handles all application interaction with a Action
@@ -160,7 +161,7 @@ class SubusersAction extends CMSObject
 	{
 		if (empty($array))
 		{
-			$this->setError(JText::_('COM_SUBUSER_EMPTY_DATA'));
+			$this->setError(Text::_('COM_SUBUSER_EMPTY_DATA'));
 
 			return false;
 		}
@@ -168,7 +169,7 @@ class SubusersAction extends CMSObject
 		// Bind the array
 		if (!$this->setProperties($array))
 		{
-			$this->setError(\JText::_('COM_SUBUSER_BINDING_ERROR'));
+			$this->setError(Text::_('COM_SUBUSER_BINDING_ERROR'));
 
 			return false;
 		}

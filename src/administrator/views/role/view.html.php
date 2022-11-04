@@ -12,6 +12,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View to edit
@@ -63,7 +66,7 @@ class SubusersViewRole extends HtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		$this->canDo = JHelperContent::getActions('com_subusers', 'role', $this->item->id);
+		$this->canDo = ContentHelper::getActions('com_subusers', 'role', $this->item->id);
 
 		if (count($errors = $this->get('Errors')))
 		{
@@ -91,7 +94,7 @@ class SubusersViewRole extends HtmlView
 		$layout = Factory::getApplication()->input->get("layout");
 
 		$this->sidebar = JHtmlSidebar::render();
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_ROLE'), 'role.png');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ROLE'), 'role.png');
 
 		// For new records, check the create permission.
 		if ($layout != "default")
@@ -100,22 +103,22 @@ class SubusersViewRole extends HtmlView
 
 			if ($isNew)
 			{
-				JToolbarHelper::save('role.save');
-				JToolbarHelper::save2new('role.save2new');
-				JToolbarHelper::cancel('role.cancel');
+				ToolbarHelper::save('role.save');
+				ToolbarHelper::save2new('role.save2new');
+				ToolbarHelper::cancel('role.cancel');
 			}
 			else
 			{
 				if ($this->isEditable($canDo, $user->id))
 				{
-					JToolbarHelper::save('role.save');
+					ToolbarHelper::save('role.save');
 				}
 
-				JToolbarHelper::cancel('role.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('role.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
 
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	/**

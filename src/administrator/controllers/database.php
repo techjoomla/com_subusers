@@ -10,12 +10,17 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Router\Route;
+
 /**
  * Installer Database Controller
  *
  * @since  2.5
  */
-class SubusersControllerDatabase extends JControllerLegacy
+class SubusersControllerDatabase extends BaseController
 {
 	/**
 	 * Tries to fix missing database updates
@@ -28,19 +33,19 @@ class SubusersControllerDatabase extends JControllerLegacy
 	public function fix()
 	{
 		// Get a handle to the Joomla! application object
-		$application = JFactory::getApplication();
+		$application = Factory::getApplication();
 
 		$model = $this->getModel('database');
 		$model->fix();
 
 		// Purge updates
-		JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_joomlaupdate/models', 'JoomlaupdateModel');
-		$updateModel = JModelLegacy::getInstance('default', 'JoomlaupdateModel');
+		BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_joomlaupdate/models', 'JoomlaupdateModel');
+		$updateModel = BaseDatabaseModel::getInstance('default', 'JoomlaupdateModel');
 		$updateModel->purge();
 
 		// Refresh versionable assets cache
-		JFactory::getApplication()->flushAssets();
+		Factory::getApplication()->flushAssets();
 
-		$this->setRedirect(JRoute::_('index.php?option=com_subusers&view=organizations', false));
+		$this->setRedirect(Route::_('index.php?option=com_subusers&view=organizations', false));
 	}
 }

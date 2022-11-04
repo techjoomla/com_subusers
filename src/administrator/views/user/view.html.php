@@ -12,6 +12,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View to edit
@@ -63,7 +66,7 @@ class SubusersViewUser extends HtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		$this->canDo = JHelperContent::getActions('com_subusers', 'user', $this->item->id);
+		$this->canDo = ContentHelper::getActions('com_subusers', 'user', $this->item->id);
 
 		if (count($errors = $this->get('Errors')))
 		{
@@ -91,7 +94,7 @@ class SubusersViewUser extends HtmlView
 		$layout = Factory::getApplication()->input->get("layout");
 
 		$this->sidebar = JHtmlSidebar::render();
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_USER'), 'user.png');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_USER'), 'user.png');
 
 		// For new records, check the create permission.
 		if ($layout != "default")
@@ -100,22 +103,22 @@ class SubusersViewUser extends HtmlView
 
 			if ($isNew)
 			{
-				JToolbarHelper::save('user.save');
-				JToolbarHelper::save2new('user.save2new');
-				JToolbarHelper::cancel('user.cancel');
+				ToolbarHelper::save('user.save');
+				ToolbarHelper::save2new('user.save2new');
+				ToolbarHelper::cancel('user.cancel');
 			}
 			else
 			{
 				if ($this->isEditable($canDo, $user->id))
 				{
-					JToolbarHelper::save('user.save');
+					ToolbarHelper::save('user.save');
 				}
 
-				JToolbarHelper::cancel('user.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('user.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
 
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	/**

@@ -83,7 +83,7 @@ class SubusersModelUser extends AdminModel
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_subusers.edit.user.data', array());
+		$data = Factory::getApplication()->getUserState('com_subusers.edit.user.data', array());
 
 		if (empty($data))
 		{

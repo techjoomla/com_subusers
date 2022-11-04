@@ -11,13 +11,17 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a list of Subusers.
  *
  * @since  1.0.0
  */
-class SubusersViewRoles extends JViewLegacy
+class SubusersViewRoles extends HtmlView
 {
 	/**
 	 * An array of items
@@ -71,7 +75,7 @@ class SubusersViewRoles extends JViewLegacy
 	/**
 	 * An ACL object to verify user rights.
 	 *
-	 * @var    CMSObject
+	 * @var    Joomla\CMS\Object\CMSObject
 	 * @since  1.0.0
 	 */
 	protected $canDo;
@@ -93,7 +97,7 @@ class SubusersViewRoles extends JViewLegacy
 		$this->filterForm    = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
 		$this->user            = Factory::getUser();
-		$this->canDo         = JHelperContent::getActions('com_subusers');
+		$this->canDo         = ContentHelper::getActions('com_subusers');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -118,28 +122,28 @@ class SubusersViewRoles extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_ROLES'), '');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_ROLES'), '');
 
 		if ($this->canDo->get('core.create'))
 		{
-			JToolbarHelper::addNew('role.add');
+			ToolbarHelper::addNew('role.add');
 		}
 
 		if ($this->canDo->get('core.edit'))
 		{
-			JToolbarHelper::editList('role.edit');
+			ToolbarHelper::editList('role.edit');
 		}
 
 		if ($this->canDo->get('core.delete'))
 		{
-			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'roles.delete', 'JTOOLBAR_DELETE');
-			JToolbarHelper::divider();
+			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'roles.delete', 'JTOOLBAR_DELETE');
+			ToolbarHelper::divider();
 		}
 
 		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
 		{
-			JToolbarHelper::preferences('com_subusers');
-			JToolbarHelper::divider();
+			ToolbarHelper::preferences('com_subusers');
+			ToolbarHelper::divider();
 		}
 	}
 }

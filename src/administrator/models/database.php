@@ -9,6 +9,8 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Schema\ChangeSet;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_installer/models/database.php';
 
@@ -30,11 +32,11 @@ class SubusersModelDatabase extends InstallerModelDatabase
 
 		try
 		{
-			$changeSet = JSchemaChangeset::getInstance($this->getDbo(), $folder);
+			$changeSet = ChangeSet::getInstance($this->getDbo(), $folder);
 		}
 		catch (RuntimeException $e)
 		{
-			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 
 			return false;
 		}

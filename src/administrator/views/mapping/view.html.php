@@ -12,6 +12,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View to edit
@@ -63,7 +66,7 @@ class SubusersViewMapping extends HtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		$this->canDo = JHelperContent::getActions('com_subusers', 'mapping', $this->item->id);
+		$this->canDo = ContentHelper::getActions('com_subusers', 'mapping', $this->item->id);
 
 		if (count($errors = $this->get('Errors')))
 		{
@@ -91,7 +94,7 @@ class SubusersViewMapping extends HtmlView
 		$layout = Factory::getApplication()->input->get("layout");
 
 		$this->sidebar = JHtmlSidebar::render();
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_MAPPING'), 'mapping.png');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_MAPPING'), 'mapping.png');
 
 		// For new records, check the create permission.
 		if ($layout != "default")
@@ -100,22 +103,22 @@ class SubusersViewMapping extends HtmlView
 
 			if ($isNew)
 			{
-				JToolbarHelper::save('mapping.save');
-				JToolbarHelper::save2new('mapping.save2new');
-				JToolbarHelper::cancel('mapping.cancel');
+				ToolbarHelper::save('mapping.save');
+				ToolbarHelper::save2new('mapping.save2new');
+				ToolbarHelper::cancel('mapping.cancel');
 			}
 			else
 			{
 				if ($this->isEditable($canDo, $user->id))
 				{
-					JToolbarHelper::save('mapping.save');
+					ToolbarHelper::save('mapping.save');
 				}
 
-				JToolbarHelper::cancel('mapping.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('mapping.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
 
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	/**
