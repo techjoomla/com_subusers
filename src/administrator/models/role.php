@@ -1,10 +1,11 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -80,7 +81,7 @@ class SubusersModelRole extends AdminModel
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_subusers.edit.role.data', array());
+		$data = Factory::getApplication()->getUserState('com_subusers.edit.role.data', array());
 
 		if (empty($data))
 		{
@@ -106,7 +107,7 @@ class SubusersModelRole extends AdminModel
 	 */
 	public function getActions($roleId)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('action');
 		$query->from($db->quoteName('#__tjsu_role_action_map'));

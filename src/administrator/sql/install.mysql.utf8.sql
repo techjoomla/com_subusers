@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `#__tjsu_roles` (
   `modified_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `ordering` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `#__tjsu_actions` (
   `client` varchar(255) NOT NULL COMMENT 'The client name Eg. com_tjlms, com_jlike',
   `created_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `#__tjsu_role_action_map` (
   `role_id` int(11) NOT NULL COMMENT 'FK to roles table',
   `action_id` int(11) NOT NULL COMMENT 'FK to actions table',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -57,5 +57,15 @@ CREATE TABLE IF NOT EXISTS `#__tjsu_users` (
   `created_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_by` int(11) NOT NULL,
   `modified_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+  PRIMARY KEY (`id`),
+  KEY `user_id_idx` (`user_id`),
+  KEY `client_id_idx` (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `#__tjsu_roles` (`id`, `name`, `client`, `created_by`, `created_date`, `modified_by`, `modified_date`, `ordering`) VALUES
+(1,	'Organization Manager',	'com_multiagency',	0,	'0000-00-00 00:00:00',	0,	'0000-00-00 00:00:00',	1),
+(2,	'Organization User',	'com_multiagency',	0,	'0000-00-00 00:00:00',	0,	'0000-00-00 00:00:00',	2);
+
+INSERT INTO `#__tjsu_actions` (`id`, `code`, `name`, `client`, `created_date`) VALUES
+(1,	'core.agency.user.delete',	'Remove user from agency',	'com_multiagency',	'0000-00-00 00:00:00'),
+(2,	'core.agency.delete', 'Remove agency', 'com_multiagency', '0000-00-00 00:00:00');

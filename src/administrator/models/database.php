@@ -3,11 +3,14 @@
  * @package     Subusers
  * @subpackage  com_subusers
  *
- * @copyright   Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Schema\ChangeSet;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_installer/models/database.php';
 
@@ -29,14 +32,15 @@ class SubusersModelDatabase extends InstallerModelDatabase
 
 		try
 		{
-			$changeSet = JSchemaChangeset::getInstance($this->getDbo(), $folder);
+			$changeSet = ChangeSet::getInstance($this->getDbo(), $folder);
 		}
 		catch (RuntimeException $e)
 		{
-			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 
 			return false;
 		}
+
 		return $changeSet;
 	}
 }

@@ -1,10 +1,11 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -111,7 +112,16 @@ class SubusersModelAction extends AdminModel
 
 		$query->select('DISTINCT role_id');
 		$query->from($db->quoteName('#__tjsu_role_action_map'));
-		$query->where($db->quoteName('action_id') . " = " . (int) $actionId);
+
+		if (is_array($actionId))
+		{
+			$query->where($db->quoteName('action_id') . 'IN (' . implode(',', $db->quote($actionId)) . ')');
+		}
+		else
+		{
+			$query->where($db->quoteName('action_id') . " = " . (int) $actionId);
+		}
+
 		$db->setQuery($query);
 
 		return $db->loadColumn();

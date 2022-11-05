@@ -1,22 +1,29 @@
 <?php
-
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2005 - 2014. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Subusers
+ * @subpackage  com_subusers
+ *
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+
 // No direct access
 defined('_JEXEC') or die;
 
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Access;
+use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
+
 /**
  * mapping Table class
  *
  * @since  1.6
  */
-class SubusersTablemapping extends JTable
+class SubusersTablemapping extends Table
 {
 	/**
 	 * Constructor
@@ -43,38 +50,38 @@ class SubusersTablemapping extends JTable
 	{
 		if ($array['id'] == 0)
 		{
-			$array['created_by'] = JFactory::getUser()->id;
+			$array['created_by'] = Factory::getUser()->id;
 		}
 
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$task = $input->getString('task', '');
 
-		if (($task == 'save' || $task == 'apply') && (!JFactory::getUser()->authorise('core.edit.state', 'com_subusers') && $array['state'] == 1))
+		if (($task == 'save' || $task == 'apply') && (!Factory::getUser()->authorise('core.edit.state', 'com_subusers') && $array['state'] == 1))
 		{
 			$array['state'] = 0;
 		}
 
 		if (isset($array['params']) && is_array($array['params']))
 		{
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
 		if (isset($array['metadata']) && is_array($array['metadata']))
 		{
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
 
-		if (!JFactory::getUser()->authorise('core.admin', 'com_subusers.mapping.' . $array['id']))
+		if (!Factory::getUser()->authorise('core.admin', 'com_subusers.mapping.' . $array['id']))
 		{
-			$actions         = JAccess::getActionsFromFile(
+			$actions         = Access::getActionsFromFile(
 				JPATH_ADMINISTRATOR . '/components/com_subusers/access.xml',
 				"/access/section[@name='mapping']/"
 			);
-			$default_actions = JAccess::getAssetRules('com_subusers.mapping.' . $array['id'])->getData();
+			$default_actions = Access::getAssetRules('com_subusers.mapping.' . $array['id'])->getData();
 			$array_jaccess   = array();
 
 			foreach ($actions as $action)
@@ -172,7 +179,9 @@ class SubusersTablemapping extends JTable
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				throw new Exception(500, JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+
+				return false;
 			}
 		}
 
@@ -214,6 +223,8 @@ class SubusersTablemapping extends JTable
 			$this->state = $state;
 		}
 
+		$this->setError('');
+
 		return true;
 	}
 
@@ -241,10 +252,10 @@ class SubusersTablemapping extends JTable
 	 *
 	 * @return mixed The id on success, false on failure.
 	 */
-	protected function _getAssetParentId(JTable $table = null, $id = null)
+	protected function _getAssetParentId(Table $table = null, $id = null)
 	{
 		// We will retrieve the parent-asset from the Asset-table
-		$assetParent = JTable::getInstance('Asset');
+		$assetParent = Table::getInstance('Asset');
 
 		// Default: if no asset-parent can be found we take the global asset
 		$assetParentId = $assetParent->getRootId();

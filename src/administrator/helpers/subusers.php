@@ -1,19 +1,20 @@
 <?php
-
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2005 - 2014. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Subusers
+ * @subpackage  com_subusers
+ *
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-// No direct access
-defined('_JEXEC') or die;
+
+defined('_JEXEC') or die();
+use Joomla\CMS\Language\Text;
 
 /**
  * Subusers helper.
  *
- * @since  1.6
+ * @since  1.0.0
  */
 class SubusersHelper
 {
@@ -26,46 +27,9 @@ class SubusersHelper
 	 */
 	public static function addSubmenu($vName = '')
 	{
-JHtmlSidebar::addEntry(
-			JText::_('COM_SUBUSERS_TITLE_ROLES'),
-			'index.php?option=com_subusers&view=roles',
-			$vName == 'roles'
-		);
-JHtmlSidebar::addEntry(
-			JText::_('COM_SUBUSERS_TITLE_ACTIONS'),
-			'index.php?option=com_subusers&view=actions',
-			$vName == 'actions'
-		);
-JHtmlSidebar::addEntry(
-			JText::_('COM_SUBUSERS_TITLE_USERS'),
-			'index.php?option=com_subusers&view=users',
-			$vName == 'users'
-		);
-	}
-
-	/**
-	 * Gets a list of the actions that can be performed.
-	 *
-	 * @return    JObject
-	 *
-	 * @since    1.6
-	 */
-	public static function getActions()
-	{
-		$user   = JFactory::getUser();
-		$result = new JObject;
-
-		$assetName = 'com_subusers';
-
-		$actions = array(
-			'core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete'
-		);
-
-		foreach ($actions as $action)
-		{
-			$result->set($action, $user->authorise($action, $assetName));
-		}
-
-		return $result;
+		JHtmlSidebar::addEntry(Text::_('COM_SUBUSERS_TITLE_ROLES'), 'index.php?option=com_subusers&view=roles', $vName == 'roles');
+		JHtmlSidebar::addEntry(Text::_('COM_SUBUSERS_TITLE_ACTIONS'), 'index.php?option=com_subusers&view=actions', $vName == 'actions');
+		JHtmlSidebar::addEntry(Text::_('COM_SUBUSERS_TITLE_MAPPINGS'), 'index.php?option=com_subusers&view=mappings', $vName == 'mappings');
+		JHtmlSidebar::addEntry(Text::_('COM_SUBUSERS_TITLE_USERS'), 'index.php?option=com_subusers&view=users', $vName == 'users');
 	}
 }

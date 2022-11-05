@@ -1,16 +1,20 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die();
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a list of Subusers.
@@ -93,7 +97,7 @@ class SubusersViewUsers extends HtmlView
 		$this->filterForm = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
 		$this->user = Factory::getUser();
-		$this->canDo = JHelperContent::getActions('com_subusers');
+		$this->canDo = ContentHelper::getActions('com_subusers');
 
 		if (count($errors = $this->get('Errors')))
 		{
@@ -117,30 +121,30 @@ class SubusersViewUsers extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_USERS'), 'users.png');
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_USERS'), 'users.png');
 
 		$canDo = $this->canDo;
 
 		if ($canDo->get('core.create'))
 		{
-			JToolbarHelper::addNew('user.add');
+			ToolbarHelper::addNew('user.add');
 		}
 
 		if ($canDo->get('core.edit'))
 		{
-			JToolbarHelper::editList('users.edit');
+			ToolbarHelper::editList('users.edit');
 		}
 
 		if ($canDo->get('core.delete'))
 		{
-			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'users.delete', 'JTOOLBAR_DELETE');
-			JToolbarHelper::divider();
+			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'users.delete', 'JTOOLBAR_DELETE');
+			ToolbarHelper::divider();
 		}
 
 		if ($canDo->get('core.admin') || $canDo->get('core.options'))
 		{
-			JToolbarHelper::preferences('com_subusers');
-			JToolbarHelper::divider();
+			ToolbarHelper::preferences('com_subusers');
+			ToolbarHelper::divider();
 		}
 	}
 }

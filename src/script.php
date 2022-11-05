@@ -1,10 +1,11 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2019 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -61,7 +62,6 @@ class Com_SubusersInstallerScript
 		$this->installModules($parent);
 	}
 
-
 	/**
 	 * Installs plugins for this component
 	 *
@@ -114,7 +114,7 @@ class Com_SubusersInstallerScript
 						array(
 							'type LIKE ' . $db->quote('plugin'),
 							'element LIKE ' . $db->quote($pluginName),
-							'folder LIKE ' . $db->quote($pluginGroup)
+							'folder LIKE ' . $db->quote($pluginGroup),
 						)
 					);
 				$db->setQuery($query);
@@ -250,7 +250,7 @@ class Com_SubusersInstallerScript
 						array(
 							'type LIKE ' . $db->quote('plugin'),
 							'element LIKE ' . $db->quote($pluginName),
-							'folder LIKE ' . $db->quote($pluginGroup)
+							'folder LIKE ' . $db->quote($pluginGroup),
 						)
 					);
 				$db->setQuery($query);
@@ -304,7 +304,7 @@ class Com_SubusersInstallerScript
 						->where(
 							array(
 								'type LIKE ' . $db->quote('module'),
-								'element LIKE ' . $db->quote($moduleName)
+								'element LIKE ' . $db->quote($moduleName),
 							)
 						);
 					$db->setQuery($query);

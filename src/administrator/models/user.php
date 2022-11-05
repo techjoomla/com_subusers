@@ -1,10 +1,11 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -82,7 +83,7 @@ class SubusersModelUser extends AdminModel
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_subusers.edit.user.data', array());
+		$data = Factory::getApplication()->getUserState('com_subusers.edit.user.data', array());
 
 		if (empty($data))
 		{
@@ -108,7 +109,7 @@ class SubusersModelUser extends AdminModel
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getAssociatedContentRole($userId, $client, $contentId)
+	public function getAssociatedContentRole($userId, $client, $contentId = null)
 	{
 		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
@@ -117,9 +118,14 @@ class SubusersModelUser extends AdminModel
 		$query->from($db->quoteName('#__tjsu_users'));
 		$query->where($db->quoteName('user_id') . " = " . (int) $userId);
 		$query->where($db->quoteName('client') . " = " . $db->q($client));
-		$query->where($db->quoteName('client_id') . " = " . (int) $contentId);
+
+		if (!is_null($contentId))
+		{
+			$query->where($db->quoteName('client_id') . " = " . $db->quote($contentId));
+		}
+
 		$db->setQuery($query);
 
-		return $db->loadResult();
+		return $db->loadColumn();
 	}
 }

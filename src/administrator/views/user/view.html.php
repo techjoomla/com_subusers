@@ -1,29 +1,55 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View to edit
  *
- * @since  1.6
+ * @since  1.0.0
  */
 class SubusersViewUser extends HtmlView
 {
-	protected $state;
+	/**
+	 * The JForm object
+	 *
+	 * @var  \Joomla\CMS\Form\Form
+	 */
+	protected $form;
 
+	/**
+	 * The active item
+	 *
+	 * @var  object
+	 */
 	protected $item;
 
-	protected $form;
+	/**
+	 * The model state
+	 *
+	 * @var  object
+	 */
+	protected $state;
+
+	/**
+	 * The actions the user is authorised to perform
+	 *
+	 * @var  JObject
+	 */
+	protected $canDo;
 
 	/**
 	 * Display the view
@@ -40,13 +66,15 @@ class SubusersViewUser extends HtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		// Check for errors.
+		$this->canDo = ContentHelper::getActions('com_subusers', 'user', $this->item->id);
+
 		if (count($errors = $this->get('Errors')))
 		{
-			throw new Exception(implode("\n", $errors));
+			throw new Exception(implode("\n", $errors), 500);
 		}
 
 		$this->addToolbar();
+
 		parent::display($tpl);
 	}
 
@@ -59,49 +87,51 @@ class SubusersViewUser extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		Factory::getApplication()->input->set('hidemainmenu', true);
+		$user       = Factory::getUser();
+		$isNew      = ($this->item->id == 0);
 
-		$user  = Factory::getUser();
-		$isNew = ($this->item->id == 0);
+		$canDo = $this->canDo;
+		$layout = Factory::getApplication()->input->get("layout");
 
-		if (isset($this->item->checked_out))
+		$this->sidebar = JHtmlSidebar::render();
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_USER'), 'user.png');
+
+		// For new records, check the create permission.
+		if ($layout != "default")
 		{
-			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
-		}
-		else
-		{
-			$checkedOut = false;
-		}
+			Factory::getApplication()->input->set('hidemainmenu', true);
 
-		$canDo = SubusersHelper::getActions();
+			if ($isNew)
+			{
+				ToolbarHelper::save('user.save');
+				ToolbarHelper::save2new('user.save2new');
+				ToolbarHelper::cancel('user.cancel');
+			}
+			else
+			{
+				if ($this->isEditable($canDo, $user->id))
+				{
+					ToolbarHelper::save('user.save');
+				}
 
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_USER'), 'user.png');
-
-		// If not checked out, can save the item.
-		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
-		{
-			JToolBarHelper::apply('user.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('user.save', 'JTOOLBAR_SAVE');
-		}
-
-		if (!$checkedOut && ($canDo->get('core.create')))
-		{
-			JToolBarHelper::custom('user.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-		}
-
-		// If an existing item, can save to a copy.
-		if (!$isNew && $canDo->get('core.create'))
-		{
-			JToolBarHelper::custom('user.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+				ToolbarHelper::cancel('user.cancel', 'JTOOLBAR_CLOSE');
+			}
 		}
 
-		if (empty($this->item->id))
-		{
-			JToolBarHelper::cancel('user.cancel', 'JTOOLBAR_CANCEL');
-		}
-		else
-		{
-			JToolBarHelper::cancel('user.cancel', 'JTOOLBAR_CLOSE');
-		}
+		ToolbarHelper::divider();
+	}
+
+	/**
+	 * Is editable
+	 *
+	 * @param   Object   $canDo   Checked Out
+	 *
+	 * @param   integer  $userId  User ID
+	 *
+	 * @return boolean
+	 */
+	protected function isEditable($canDo, $userId)
+	{
+		return $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId);
 	}
 }

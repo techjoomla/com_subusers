@@ -1,10 +1,11 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die();
@@ -63,7 +64,7 @@ class RBACL
 	 **/
 	public static function model($name, $config = array())
 	{
-		BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_subusers/models');
+		BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_subusers/models', 'SubusersModel');
 
 		// @TODO Add support for cache
 		return BaseDatabaseModel::getInstance($name, 'SubusersModel', $config);
@@ -129,7 +130,9 @@ class RBACL
 					$userModel = self::model("user");
 					$contentRoleId = $userModel->getAssociatedContentRole($userId, $client, $contentId);
 
-					if (in_array($contentRoleId, $allowedRoles))
+					$rolesAllowed = array_intersect($contentRoleId, $allowedRoles);
+
+					if (!empty($rolesAllowed))
 					{
 						return true;
 					}
@@ -165,15 +168,15 @@ class RBACL
 	/**
 	 * Get user roles by user id and client id
 	 *
-	 * @param   integer  $userId            userId
-	 * @param   string   $client            client for role
-	 * @param   integer  $clientContentIid  content id
+	 * @param   integer  $userId           userId
+	 * @param   string   $client           client for role
+	 * @param   integer  $clientContentId  content id
 	 *
 	 * @return  array
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public static function getRoleByUser($userId, $client = '', $clientContentIid = 0)
+	public static function getRoleByUser($userId, $client = '', $clientContentId = null)
 	{
 		$roles = array();
 
@@ -190,9 +193,9 @@ class RBACL
 				$query->where($db->quoteName('client') . " = " . $db->quote($client));
 			}
 
-			if (!empty($clientContentIid))
+			if (!is_null($clientContentId))
 			{
-				$query->where($db->quoteName('client_id') . " = " . $db->quote($clientContentIid));
+				$query->where($db->quoteName('client_id') . " = " . $db->quote($clientContentId));
 			}
 
 			$db->setQuery($query);

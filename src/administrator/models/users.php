@@ -1,15 +1,18 @@
 <?php
 /**
- * @package    Subusers
+ * @package     Subusers
+ * @subpackage  com_subusers
  *
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (C) 2009 - 2018 Techjoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Methods supporting a list of Subusers records.
@@ -30,12 +33,12 @@ class SubusersModelUsers extends ListModel
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				'id', 'a.`id`',
-				'user_id', 'a.`user_id`',
-				'role_id', 'a.`role_id`',
-				'client', 'a.`client`',
-				'client_id', 'a.`client_id`',
-				'created_by', 'a.`created_by`',
+				'id', 'a.id',
+				'user_id', 'a.user_id',
+				'role_id', 'a.role_id',
+				'client', 'a.client',
+				'client_id', 'a.client_id',
+				'created_by', 'a.created_by',
 			);
 		}
 
@@ -56,14 +59,14 @@ class SubusersModelUsers extends ListModel
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
 		$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . ' . filter.user_id', 'filter_user_id', '', 'string'));
 
-		$params = JComponentHelper::getParams('com_subusers');
+		$params = ComponentHelper::getParams('com_subusers');
 		$this->setState('params', $params);
 
 		parent::populateState('a.id', 'desc');
@@ -123,7 +126,7 @@ class SubusersModelUsers extends ListModel
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$search = $db->Quote('%' . $db->escape(trim($search), true) . '%');
 				$query->where('( uc.`name` LIKE ' . $search . '  OR  a.`user_id` LIKE ' . $search . '  OR  a.`client_id` LIKE ' . $search . ' )');
 			}
 		}

@@ -1,29 +1,84 @@
 <?php
-
 /**
- * @version    CVS: 1.0.0
- * @package    Com_Subusers
- * @author     Techjoomla <contact@techjoomla.com>
- * @copyright  Copyright (C) 2005 - 2014. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Subusers
+ * @subpackage  com_subusers
+ *
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 // No direct access
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a list of Subusers.
  *
- * @since  1.6
+ * @since  1.0.0
  */
-class SubusersViewMappings extends JViewLegacy
+class SubusersViewMappings extends HtmlView
 {
+	/**
+	 * An array of items
+	 *
+	 * @var  array
+	 */
 	protected $items;
 
+	/**
+	 * The pagination object
+	 *
+	 * @var  JPagination
+	 */
 	protected $pagination;
 
+	/**
+	 * The model state
+	 *
+	 * @var  object
+	 */
 	protected $state;
+
+	/**
+	 * Form object for search filters
+	 *
+	 * @var  JForm
+	 */
+	public $filterForm;
+
+	/**
+	 * Logged in User
+	 *
+	 * @var  JObject
+	 */
+	public $user;
+
+	/**
+	 * The active search filters
+	 *
+	 * @var  array
+	 */
+	public $activeFilters;
+
+	/**
+	 * The sidebar markup
+	 *
+	 * @var  string
+	 */
+	protected $sidebar;
+
+	/**
+	 * An ACL object to verify user rights.
+	 *
+	 * @var    Joomla\CMS\Object\CMSObject
+	 * @since  1.0.0
+	 */
+	protected $canDo;
 
 	/**
 	 * Display the view
@@ -39,6 +94,10 @@ class SubusersViewMappings extends JViewLegacy
 		$this->state = $this->get('State');
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
+		$this->filterForm    = $this->get('FilterForm');
+		$this->activeFilters = $this->get('ActiveFilters');
+		$this->user            = Factory::getUser();
+		$this->canDo         = ContentHelper::getActions('com_subusers');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -49,8 +108,8 @@ class SubusersViewMappings extends JViewLegacy
 		SubusersHelper::addSubmenu('mappings');
 
 		$this->addToolbar();
-
 		$this->sidebar = JHtmlSidebar::render();
+
 		parent::display($tpl);
 	}
 
@@ -59,108 +118,32 @@ class SubusersViewMappings extends JViewLegacy
 	 *
 	 * @return void
 	 *
-	 * @since    1.6
+	 * @since    1.0.0
 	 */
 	protected function addToolbar()
 	{
-		require_once JPATH_COMPONENT . '/helpers/subusers.php';
+		ToolBarHelper::title(Text::_('COM_SUBUSERS_TITLE_MAPPINGS'), '');
 
-		$state = $this->get('State');
-		$canDo = SubusersHelper::getActions($state->get('filter.category_id'));
-
-		JToolBarHelper::title(JText::_('COM_SUBUSERS_TITLE_MAPPINGS'), 'mappings.png');
-
-		// Check if the form exists before showing the add/edit buttons
-		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/mapping';
-
-		if (file_exists($formPath))
+		if ($this->canDo->get('core.create'))
 		{
-			if ($canDo->get('core.create'))
-			{
-				JToolBarHelper::addNew('mapping.add', 'JTOOLBAR_NEW');
-				JToolbarHelper::custom('mappings.duplicate', 'copy.png', 'copy_f2.png', 'JTOOLBAR_DUPLICATE', true);
-			}
-
-			if ($canDo->get('core.edit') && isset($this->items[0]))
-			{
-				JToolBarHelper::editList('mapping.edit', 'JTOOLBAR_EDIT');
-			}
+			ToolbarHelper::addNew('mapping.add');
 		}
 
-		if ($canDo->get('core.edit.state'))
+		if ($this->canDo->get('core.edit'))
 		{
-			if (isset($this->items[0]->state))
-			{
-				JToolBarHelper::divider();
-				JToolBarHelper::custom('mappings.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::custom('mappings.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
-			}
-			elseif (isset($this->items[0]))
-			{
-				// If this component does not use state then show a direct delete button as we can not trash
-				JToolBarHelper::deleteList('', 'mappings.delete', 'JTOOLBAR_DELETE');
-			}
-
-			if (isset($this->items[0]->state))
-			{
-				JToolBarHelper::divider();
-				JToolBarHelper::archiveList('mappings.archive', 'JTOOLBAR_ARCHIVE');
-			}
-
-			if (isset($this->items[0]->checked_out))
-			{
-				JToolBarHelper::custom('mappings.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
-			}
+			ToolbarHelper::editList('mapping.edit');
 		}
 
-		// Show trash and delete for components that uses the state field
-		if (isset($this->items[0]->state))
+		if ($this->canDo->get('core.delete'))
 		{
-			if ($state->get('filter.state') == -2 && $canDo->get('core.delete'))
-			{
-				JToolBarHelper::deleteList('', 'mappings.delete', 'JTOOLBAR_EMPTY_TRASH');
-				JToolBarHelper::divider();
-			}
-			elseif ($canDo->get('core.edit.state'))
-			{
-				JToolBarHelper::trash('mappings.trash', 'JTOOLBAR_TRASH');
-				JToolBarHelper::divider();
-			}
+			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'mappings.delete', 'JTOOLBAR_DELETE');
+			ToolbarHelper::divider();
 		}
 
-		if ($canDo->get('core.admin'))
+		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
 		{
-			JToolBarHelper::preferences('com_subusers');
+			ToolbarHelper::preferences('com_subusers');
+			ToolbarHelper::divider();
 		}
-
-		// Set sidebar action - New in 3.0
-		JHtmlSidebar::setAction('index.php?option=com_subusers&view=mappings');
-
-		$this->extra_sidebar = '';
-		JHtmlSidebar::addFilter(
-
-			JText::_('JOPTION_SELECT_PUBLISHED'),
-
-			'filter_published',
-
-			JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), "value", "text", $this->state->get('filter.state'), true)
-
-		);
-	}
-
-	/**
-	 * Method to order fields
-	 *
-	 * @return void
-	 */
-	protected function getSortFields()
-	{
-		return array(
-			'a.`id`' => JText::_('JGRID_HEADING_ID'),
-			'a.`role_id`' => JText::_('COM_SUBUSERS_MAPPINGS_ROLE_ID'),
-			'a.`action_id`' => JText::_('COM_SUBUSERS_MAPPINGS_ACTION_ID'),
-			'a.`ordering`' => JText::_('JGRID_HEADING_ORDERING'),
-			'a.`state`' => JText::_('JSTATUS'),
-		);
 	}
 }

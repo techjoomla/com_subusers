@@ -4,11 +4,10 @@
  * @subpackage  com_subusers
  *
  * @author      Techjoomla <extensions@techjoomla.com>
- * @copyright   Copyright (C) 2009 - 2022 Techjoomla. All rights reserved.
+ * @copyright   Copyright (C) 2009 - 2019 Techjoomla. All rights reserved.
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access.
 defined('_JEXEC') or die();
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -22,7 +21,7 @@ FormHelper::loadFieldClass('list');
  *
  * @since  __DEPLOY_VERSION__
  */
-class JFormFieldRole extends JFormFieldList
+class JFormFieldAction extends JFormFieldList
 {
 	/**
 	 * The form field type.
@@ -30,7 +29,7 @@ class JFormFieldRole extends JFormFieldList
 	 * @var		string
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected $type = 'role';
+	protected $type = 'action';
 
 	/**
 	 * Method to get list of role options.
@@ -44,14 +43,14 @@ class JFormFieldRole extends JFormFieldList
 		$jinput = Factory::getApplication()->input;
 		$client = $jinput->get('client', '', 'STRING');
 
-		$roleModel = RBACL::model("roles", array("ignore_request" => true));
-		$roleModel->setState('filter.client', $client);
-		$results = $roleModel->getItems();
+		$rolesModel = RBACL::model("actions", array("ignore_request" => true));
+		$rolesModel->setState('filter.client', $client);
+		$results = $rolesModel->getItems();
 
 		$options = array();
-		$options[] = HTMLHelper::_('select.option', '', Text::_('COM_SUBUSERS_FORM_LBL_SELECT_ROLE'));
+		$options[] = HTMLHelper::_('select.option', '', Text::_('COM_SUBUSERS_FORM_LBL_SELECT_ACTION'));
 
-		if ($results)
+		if (!empty($results))
 		{
 			foreach ($results as $result)
 			{

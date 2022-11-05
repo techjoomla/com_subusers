@@ -27,7 +27,7 @@ $listDirn  = $this->state->get('list.direction');
 	<div class="row-fluid">
 		<form action="<?php echo Route::_('index.php?option=com_subusers&view=users'); ?>" method="post" name="adminForm" id="adminForm">
 
-			<?php if (!empty( $this->sidebar))
+			<?php if (!empty($this->sidebar))
 			{
 			?>
 				<div id="j-sidebar-container" class="span2">
@@ -71,7 +71,7 @@ $listDirn  = $this->state->get('list.direction');
 									<?php echo HTMLHelper::_('searchtools.sort', 'COM_SUBUSERS_USERS_CLIENT_ID', 'a.role_id', $listDirn, $listOrder); ?>
 								</th>
 								<th width="1%" class="nowrap center hidden-phone">
-									<?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.`id`', $listDirn, $listOrder); ?>
+									<?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder);?>
 								</th>
 							</tr>
 						</thead>
