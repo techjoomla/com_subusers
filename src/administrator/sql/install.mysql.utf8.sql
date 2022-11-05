@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS `#__tjsu_users` (
   `created_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_by` int(11) NOT NULL,
   `modified_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
-  KEY `user_id_idx` (`user_id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id_idx` (`user_id`),
   KEY `client_id_idx` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
